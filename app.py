@@ -1,11 +1,16 @@
+from bson.json_util import dumps, loads
 from datetime import datetime
 from encoder import JSONEncoder
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
+from flask_cors import CORS
+from models import User
 from pymongo import MongoClient
-import json, os, pprint
+import bson, json, os, pprint
 
 # Flask Application
 app = Flask(__name__)
+# Cross Origin Resource Sharing
+CORS(app)
 # Read Credentials From Json
 base_dir = os.getcwd()
 MongoDBCredentialsFile = open(os.path.join(base_dir, "MongoDBCredentials.json"))
@@ -17,9 +22,9 @@ db = client["shopify"]
 # Current User
 CurrentUser = None
 
-def Main():
-    SeedUsers()
-    user = AuthenticateUser(username="bobbyboi", password="password123")
+def main():
+    seed_users()
+    user = login_user(email="david@gmail.com", password="password123")
     if user is not None:
         print("Login Successful!")
         CurrentUser = user
@@ -27,21 +32,21 @@ def Main():
     else:
         print("Login Unsuccessful!")
 
-def SeedUsers():
+def seed_users():
     users = [
         {
+            "name" : "Bob",
             "email" : "bob@gmail.com",
-            "username" : "bobbyboi",
             "password" : "password123",
         },
         {
+            "name" : "David",
             "email" : "david@gmail.com",
-            "username" : "beckhamDee",
             "password" : "password123",
         },
         {
+            "name" : "Frank",
             "email" : "frank@gmail.com",
-            "username" : "frankenGG",
             "password" : "password123",
         },
     ]
@@ -52,27 +57,41 @@ def SeedUsers():
     else:
         print("User collection has been seeded.")
 
-def AuthenticateUser(username, password):
+def login_user(email, password):
     users_collection = db["users"]
-    user = users_collection.find_one({"username" : username, "password" : password,})
+    user = users_collection.find_one({"email" : email, "password" : password,})
     return user
 
+def signup_user(user):
+    users_collection = db["users"]
+    user_id =  users_collection.insert_one(user).inserted_id
+    return user_id
+
 @app.route('/')
-def Index():
-    return jsonify("Welcome to Shopify API")
+def index():
+    return jsonify("Welcome to Shopify API"), 200
 
 @app.route('/login')
-def Login():
-    username = request.args.get("username")
+def login():
+    email = request.args.get("email")
     password = request.args.get("password")
-    user = AuthenticateUser(username=username, password=password)
+    user = login_user(email=email, password=password)
     return json.loads(JSONEncoder().encode(user))
 
-@app.route('/register')
-def Register():
-    return
-    
+@app.route('/signup', methods=['POST'])
+def register():
+    data = request.get_json()
+    if data is None:
+        return Response(400)
+    else:
+        user_id = signup_user(user=data)
+        encoded_user_id = JSONEncoder().encode(user_id)
+        return jsonify(str(user_id)), 201
+
+@app.route('/user/update', methods=['POST'])
+def update_user_details():
+    return  
 
 if __name__ == "__main__":
+    # main()
     app.run()
-    # Main()
