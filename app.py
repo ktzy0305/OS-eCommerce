@@ -1,3 +1,4 @@
+from bson import ObjectId
 from bson.json_util import dumps, loads
 from datetime import datetime
 from encoder import JSONEncoder
@@ -67,6 +68,14 @@ def signup_user(user):
     user_id =  users_collection.insert_one(user).inserted_id
     return user_id
 
+def update_user(user_id, data):
+    users_collection = db["users"]
+    users_collection.update_one({"_id" : ObjectId(user_id)}, { "$set": data })
+
+def delete_user_by_id(user_id):
+    users_collection = db["users"]
+    users_collection.delete_one({"_id" : ObjectId(user_id)})
+
 @app.route('/')
 def index():
     return jsonify("Welcome to Shopify API"), 200
@@ -88,9 +97,18 @@ def register():
         encoded_user_id = JSONEncoder().encode(user_id)
         return jsonify(str(user_id)), 201
 
-@app.route('/user/update', methods=['POST'])
-def update_user_details():
-    return  
+@app.route('/user/update/<string:user_id>', methods=['PATCH'])
+def update_user_details(user_id):
+    users_collection = db["users"]
+    data = request.get_json()
+    update_user(user_id=user_id, data=data)
+    return '', 204
+
+@app.route('/user/delete/<string:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    users_collection = db["users"]
+    delete_user_by_id(user_id=user_id)
+    return '', 200
 
 if __name__ == "__main__":
     # main()
