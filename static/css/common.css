@@ -1,0 +1,8 @@
+body{
+    font-family: 'Open Sans', sans-serif;
+}
+
+a.navbar-brand{
+    font-weight: bold !important;
+    font-size: 1.5em;
+}

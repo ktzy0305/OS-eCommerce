@@ -2,7 +2,7 @@ from bson import ObjectId
 from bson.json_util import dumps, loads
 from datetime import datetime
 from encoder import JSONEncoder
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, render_template, request, Response
 from flask_cors import CORS
 from models import User
 from pymongo import MongoClient
@@ -78,14 +78,17 @@ def delete_user_by_id(user_id):
 
 @app.route('/')
 def index():
-    return jsonify("Welcome to Shopify API"), 200
+    return render_template("home.html")
 
 @app.route('/login')
 def login():
     email = request.args.get("email")
     password = request.args.get("password")
     user = login_user(email=email, password=password)
-    return json.loads(JSONEncoder().encode(user))
+    if user is None:
+        return jsonify("Login Unsuccessful"), 200
+    else:
+        return json.loads(JSONEncoder().encode(user)), 200
 
 @app.route('/signup', methods=['POST'])
 def register():
