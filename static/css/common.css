@@ -6,3 +6,7 @@ a.navbar-brand{
     font-weight: bold !important;
     font-size: 1.5em;
 }
+
+.fa-bars{
+    color: #000000;
+}

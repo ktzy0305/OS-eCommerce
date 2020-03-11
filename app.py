@@ -22,6 +22,8 @@ client = MongoClient("mongodb+srv://{0}:{1}@{2}".format(MongoDBCredentials["user
 db = client["shopify"]
 # Current User
 CurrentUser = None
+# API Base URL
+API_BASE_URL = "/api/v1"
 
 def main():
     seed_users()
@@ -80,7 +82,7 @@ def delete_user_by_id(user_id):
 def index():
     return render_template("home.html")
 
-@app.route('/login')
+@app.route(API_BASE_URL+'/login')
 def login():
     email = request.args.get("email")
     password = request.args.get("password")
@@ -90,7 +92,7 @@ def login():
     else:
         return json.loads(JSONEncoder().encode(user)), 200
 
-@app.route('/signup', methods=['POST'])
+@app.route(API_BASE_URL+'/signup', methods=['POST'])
 def register():
     data = request.get_json()
     if data is None:
@@ -100,14 +102,14 @@ def register():
         encoded_user_id = JSONEncoder().encode(user_id)
         return jsonify(str(user_id)), 201
 
-@app.route('/user/update/<string:user_id>', methods=['PATCH'])
+@app.route(API_BASE_URL+'/user/update/<string:user_id>', methods=['PATCH'])
 def update_user_details(user_id):
     users_collection = db["users"]
     data = request.get_json()
     update_user(user_id=user_id, data=data)
     return '', 204
 
-@app.route('/user/delete/<string:user_id>', methods=['DELETE'])
+@app.route(API_BASE_URL+'/user/delete/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     users_collection = db["users"]
     delete_user_by_id(user_id=user_id)
