@@ -78,12 +78,18 @@ def delete_user_by_id(user_id):
     users_collection = db["users"]
     users_collection.delete_one({"_id" : ObjectId(user_id)})
 
+# Page Routes
 @app.route('/')
 def index():
     return render_template("home.html")
 
-@app.route(API_BASE_URL+'/login')
+@app.route('/login')
 def login():
+    return render_template("login.html")
+
+# API Routes
+@app.route(API_BASE_URL+'/login')
+def api_login():
     email = request.args.get("email")
     password = request.args.get("password")
     user = login_user(email=email, password=password)
@@ -93,7 +99,7 @@ def login():
         return json.loads(JSONEncoder().encode(user)), 200
 
 @app.route(API_BASE_URL+'/signup', methods=['POST'])
-def register():
+def api_register():
     data = request.get_json()
     if data is None:
         return Response(400)
@@ -103,14 +109,14 @@ def register():
         return jsonify(str(user_id)), 201
 
 @app.route(API_BASE_URL+'/user/update/<string:user_id>', methods=['PATCH'])
-def update_user_details(user_id):
+def api_update_user_details(user_id):
     users_collection = db["users"]
     data = request.get_json()
     update_user(user_id=user_id, data=data)
     return '', 204
 
 @app.route(API_BASE_URL+'/user/delete/<string:user_id>', methods=['DELETE'])
-def delete_user(user_id):
+def api_delete_user(user_id):
     users_collection = db["users"]
     delete_user_by_id(user_id=user_id)
     return '', 200

@@ -1,12 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Shopify API{% endblock %}
+{% block title %}Home{% endblock %}
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-sm-12">
-        {% include 'includes/carousel.html' %}
+{% include 'components/carousel.html' %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="product-showcase">
+                <h2>Featured</h2>
+                {% include 'components/product_showcase.html' %}
+            </div>
+            <div class="product-showcase">
+                <h2>What's New</h2>
+            </div>
+            <div class="product-showcase">
+                <h2>Best Sellers</h2>
+            </div>
+            <div class="product-showcase">
+                <h2>All Products</h2>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
