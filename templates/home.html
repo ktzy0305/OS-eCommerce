@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
 
 {% block content %}
 {% include 'components/carousel.html' %}
@@ -10,16 +11,55 @@
         <div class="col-sm-12">
             <div class="product-showcase">
                 <h2>Featured</h2>
-                {% include 'components/product_showcase.html' %}
+                <div class="owl-carousel owl-theme">
+                    {% for product in featured_products %}
+                    <div class="item product-item">
+                        {{ product }}
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
             <div class="product-showcase">
                 <h2>What's New</h2>
+                <div class="owl-carousel owl-theme">
+                    {% for product in new_products %}
+                    <div class="item product-item">
+                        {{ product }}
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
             <div class="product-showcase">
                 <h2>Best Sellers</h2>
+                <div class="owl-carousel owl-theme">
+                    {% for product in best_selling_products %}
+                    <div class="item product-item">
+                        {{ product }}
+                    </div>
+                    {% endfor %}
+                </div>  
             </div>
             <div class="product-showcase">
                 <h2>All Products</h2>
+                <div class="row">
+                    {% for product in all_products %}
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+                        <a class="search-result-link" href="">
+                            <div class="product-item">
+                                {{ product }}
+                                <!-- <div>
+                                    <span class="offer-indicator">On Offer</span>
+                                </div>
+                                <img class="card-img-top search-result-image" src="./Images/products/California_Baby_Shampoo_And_Bodywash-Calming.jpg">
+                                <div class="card-footer search-result-title-container">
+                                    <p class="card-title search-result-product-title">California Baby Shampoo And Bodywash - Calming</p>
+                                    <p class="card-text search-result-price"><s>S$ 28.00</s> <span class="offer-price">S$ 22.90</span></p>
+                                </div> -->
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

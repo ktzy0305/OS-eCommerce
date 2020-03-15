@@ -81,7 +81,11 @@ def delete_user_by_id(user_id):
 # Page Routes
 @app.route('/')
 def index():
-    return render_template("home.html")
+    return render_template("home.html", 
+                           featured_products=[1,2,3,4,5],
+                           new_products=[1,2,3,4,5], 
+                           best_selling_products=[1,2,3,4,5], 
+                           all_products=[1,2,3,4,5,6,7,8,9,10,11,12])
 
 @app.route('/login')
 def login():
