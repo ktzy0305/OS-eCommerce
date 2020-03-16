@@ -4,9 +4,17 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-sm-12">
-        
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Login</li>
+        </ol>
+      </nav>
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1">
+            <h2>Login</h2>
+        </div>
     </div>
 </div>
 {% endblock %}
