@@ -1,1 +1,1 @@
-web: gunicorn routes:kt_home
+web: gunicorn routes:app
