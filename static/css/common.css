@@ -10,3 +10,7 @@ a.navbar-brand{
 .fa-bars{
     color: #000000;
 }
+
+nav[aria-label="breadcrumb"]{
+    padding-top: 30px;
+}
