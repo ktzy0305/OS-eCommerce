@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+        </ol>
+    </nav>
+    <div class="col-sm-12">
+    </div>
+</div>
+{% endblock %}

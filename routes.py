@@ -1,20 +1,10 @@
 from base import *
 from classes import *
 
-# App Functions
-def login_user(email, password):
-    user = User.objects(email=email, password=password).first()
-    return user
-
-def update_user(user_id, data):
-    user = User.objects.get(id=user_id)
-    user.update(__raw__={"$set": data })
-
-def delete_user_by_id(user_id):
-    user = User.objects.get(id=user_id)
-    user.delete()
-
-# Page Routes
+"""
+> Web Page Routes
+Contains the routes that define each webpage in the web application.
+"""
 @app.route('/')
 def index():
     return render_template("home.html", 
@@ -30,9 +20,9 @@ def login():
     else:
         email = request.form.get("email")
         password = request.form.get("password")
-        user = login_user(email, password)
+        user = User.objects(email=email, password=password).first()
         if user is not None:
-            session["user"] = user.email
+            session["user"] = user
             return redirect(url_for("index"))
         else:
             return render_template("login.html", error=True)
@@ -46,12 +36,27 @@ def logout():
 def register():
     return render_template("register.html")
 
-# API Routes
+@app.route('/shoppingcart')
+def shopping_cart():
+    return render_template("shoppingcart.html")
+
+@app.route('/userprofile')
+def user_profile():
+    return render_template("profile.html")
+
+
+
+
+"""
+> REST API Routes
+Contains the endpoints for mobile applications to perform user functionality
+of this web application.
+"""
 @app.route(API_BASE_URL+'/login')
 def api_login():
     email = request.args.get("email")
     password = request.args.get("password")
-    user = login_user(email=email, password=password)
+    user = User.objects(email=email, password=password).first()
     if user is None:
         return jsonify("Login Unsuccessful"), 200
     else:
@@ -72,13 +77,15 @@ def api_register():
 @app.route(API_BASE_URL+'/user/update/<string:user_id>', methods=['PATCH'])
 def api_update_user_details(user_id):
     data = request.get_json()
-    update_user(user_id=user_id, data=data)
-    return '', 204
+    user = User.objects.get(id=user_id)
+    user.update(__raw__={"$set": data })
+    return 'Update Successful!', 204
 
 @app.route(API_BASE_URL+'/user/delete/<string:user_id>', methods=['DELETE'])
 def api_delete_user(user_id):
-    delete_user_by_id(user_id=user_id)
-    return '', 200
+    user = User.objects.get(id=user_id)
+    user.delete()
+    return 'Delete Successful!'.format(), 200
 
 if __name__ == "__main__":
     app.run()

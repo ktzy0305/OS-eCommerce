@@ -31,11 +31,21 @@
             </form>
             <ul class="navbar-nav ml-auto">
                 {% if session["user"] %}
-                <li class="nav-item">
-                    <a class="nav-link">Welcome, {{ session["user"] }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                <!-- <li class="nav-item active">
+                    <a class="nav-link">Welcome, <b>{{ session["user"].name }}</b></a>
+                </li> -->
+                <li class="nav-item active dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Welcome, <b>{{ session["user"].name }}</b>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ url_for('shopping_cart') }}"><i class="fa fa-shopping-cart"></i> Shopping Cart</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i> User Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
                 </li>
                 {% else %}
                 <li class="nav-item {% if url_for(request.endpoint) == url_for('login') %}active{% endif %}">
@@ -44,7 +54,7 @@
                 <li class="nav-item {% if url_for(request.endpoint) == url_for('register') %}active{% endif %}">
                     <a class="nav-link" href="{{ url_for('register') }}">Register</a>
                 </li>
-                {%endif%}
+                {% endif %}
                 <li class="nav-item active">
                     <a class="nav-link" href="#"><i class="fa fa-shopping-cart"></i> 0 items</a>
                 </li>
