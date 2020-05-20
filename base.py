@@ -6,7 +6,7 @@ from flask import Flask, jsonify, render_template, redirect, request, Response, 
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS
 from pymongo import MongoClient
-import bson, json, jwt, os, pprint
+import bcrypt, bson, json, jwt, os, pprint
 
 # Fixed Variables
 API_BASE_URL = "/api/v1"

@@ -20,12 +20,15 @@ def login():
     else:
         email = request.form.get("email")
         password = request.form.get("password")
-        user = User.objects(email=email, password=password).first()
-        if user is not None:
-            session["user"] = user
-            return redirect(url_for("index"))
+        user = User.objects(email=email).first()
+        if user is None:
+            return render_template("login.html", error="The entered email does not exist.")
         else:
-            return render_template("login.html", error=True)
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                session["user"] = user
+                return redirect(url_for("index"))
+            else:
+                return render_template("login.html", error="The entered password is invalid.")
 
 @app.route('/logout')
 def logout():
@@ -56,23 +59,31 @@ of this web application.
 def api_login():
     email = request.args.get("email")
     password = request.args.get("password")
-    user = User.objects(email=email, password=password).first()
+    user = User.objects(email=email).first()
     if user is None:
-        return jsonify("Login Unsuccessful"), 200
+        return jsonify("User with email {} does not exist.".format(email)), 200
     else:
-        token = jwt.encode({'user' : user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, app.config["SECRET_KEY"])
-        return jsonify({'token' : token.decode('UTF-8')}), 200
+        if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            token = jwt.encode({'user' : user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, app.config["SECRET_KEY"])
+            return jsonify({'token' : token.decode('UTF-8')}), 200
+        else:
+            return jsonify("The entered password was invalid.".format(email)), 200
 
 @app.route(API_BASE_URL+'/signup', methods=['POST'])
 def api_register():
     data = request.get_json()
     if data is None:
-        return Response(400)
+        return jsonify('No data received'), 400
     else:
-        new_user = User(email=data["email"], password=data["password"], name=data["name"])
-        new_user.save()
-        token = jwt.encode({'user' : new_user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, app.config["SECRET_KEY"])
-        return jsonify({'token' : token.decode('UTF-8')}), 201
+        existing_user = User.objects(email=data["email"]).first()
+        if existing_user is None:
+            password_hash = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
+            new_user = User(email=data["email"], password=password_hash, name=data["name"])
+            new_user.save()
+            token = jwt.encode({'user' : new_user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, app.config["SECRET_KEY"])
+            return jsonify({'token' : token.decode('UTF-8')}), 201
+        else:
+            return jsonify("A user with the email {0} already exists.".format(data["email"])), 200
 
 @app.route(API_BASE_URL+'/user/update/<string:user_id>', methods=['PATCH'])
 def api_update_user_details(user_id):

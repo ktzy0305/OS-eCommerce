@@ -26,12 +26,12 @@
                   <small id="registerHelp" class="form-text text-muted"><a href="{{ url_for('register') }}">Don't have an account? Click here to register.</a></small>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
+                {% if error %}
                 <div>
                   <br/>
-                  {% if error %}
-                  <p class="text-danger">The email or password you have entered is incorrect.</p>
-                  {% endif %}
+                  <p class="text-danger">{{ error }}</p>
                 </div>
+                {% endif %}
             </form>
         </div>
     </div>
