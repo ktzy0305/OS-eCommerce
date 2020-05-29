@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock%}
 
 {% block content %}
 <div class="container">
@@ -11,7 +15,34 @@
             <li class="breadcrumb-item active" aria-current="page">Register</li>
         </ol>
     </nav>
-    <div class="col-sm-12">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1">
+            <h2>User Registeration</h2>
+            <form action="{{ url_for('register') }}" method="POST" onsubmit="return registrationValidity()">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Name" onblur="checkNameValidity()">
+                    <small id='name_error' class="form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" onblur="checkEmailValidity()">
+                    <small id='email_error' class="form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" onchange="checkPasswordValidity()">
+                    <small id='password_error' class="form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label for="password2">Confirm Password</label>
+                    <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password" onchange="checkConfirmPasswordValidity()">
+                    <small id='password2_error' class="form-text text-danger"></small>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+                <small class="form-text">By creating your account, you agree to our <a href="">Terms and Conditions</a>.</small>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

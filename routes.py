@@ -15,33 +15,55 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
-        return render_template("login.html", error=False)
-    else:
-        email = request.form.get("email")
-        password = request.form.get("password")
-        user = User.objects(email=email).first()
-        if user is None:
-            return render_template("login.html", error="The entered email does not exist.")
-        else:
-            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                session["user"] = user
-                return redirect(url_for("index"))
+    if session.get("user") is None:
+        if request.method == 'POST':
+            email = request.form.get("email")
+            password = request.form.get("password")
+            if email == "" or password == "":
+                return render_template("login.html", error="Please enter your email and/or password.")
+            user = User.objects(email=email).first()
+            if user is None:
+                return render_template("login.html", error="Email and/or password is invalid.")
             else:
-                return render_template("login.html", error="The entered password is invalid.")
+                if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                    session["user"] = user
+                    return redirect(url_for("index"))
+                else:
+                    return render_template("login.html", error="Email and/or password is invalid.")
+        else:
+            return render_template("login.html", error=False)
+    else:
+        return redirect(url_for("index"))
 
 @app.route('/logout')
 def logout():
-    session.pop("user", None)
+    if session.get("user") is not None:
+        session.pop("user", None)
     return redirect(url_for('index'))
         
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template("register.html")
+    if session.get("user") is None:
+        if request.method == 'POST':
+            name = request.form.get('name')
+            email = request.form.get("email")
+            password = request.form.get("password")
+            confirm_password = request.form.get("password2")
+            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            new_user = User(email=email, password=password_hash, name=name)
+            new_user.save()
+            return redirect(url_for("index"))
+        else:
+            return render_template("register.html")
+    else:
+        return redirect(url_for('index'))
 
 @app.route('/shoppingcart')
 def shopping_cart():
-    return render_template("shoppingcart.html")
+    if session.get("user") is None:
+        return redirect(url_for("index"))
+    else:
+        return render_template("shoppingcart.html")
 
 @app.route('/userprofile')
 def user_profile():

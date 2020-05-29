@@ -13,7 +13,7 @@
     </nav>
     <div class="row">
         <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1">
-            <h2>Login</h2>
+            <h2>User Login</h2>
             <form action="{{ url_for('login') }}" method="POST">
                 <div class="form-group">
                   <label for="email">Email Address</label>
@@ -29,7 +29,7 @@
                 {% if error %}
                 <div>
                   <br/>
-                  <p class="text-danger">{{ error }}</p>
+                  <p class="form-text text-danger">{{ error }}</p>
                 </div>
                 {% endif %}
             </form>
