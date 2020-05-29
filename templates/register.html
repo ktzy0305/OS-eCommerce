@@ -22,22 +22,46 @@
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="Name" onblur="checkNameValidity()">
-                    <small id='name_error' class="form-text text-danger"></small>
+                    <small id='name_error' class="form-text text-danger">
+                        {% if errors %}
+                            {% if "name_error" in errors.keys() %}
+                                {{ errors["name_error"] }}
+                            {% endif %}
+                        {% endif %}
+                    </small>
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Email" onblur="checkEmailValidity()">
-                    <small id='email_error' class="form-text text-danger"></small>
+                    <small id='email_error' class="form-text text-danger">
+                        {% if errors %}
+                            {% if "email_error" in errors.keys() %}
+                                {{ errors["email_error"] }}
+                            {% endif %}
+                        {% endif %}
+                    </small>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password" onchange="checkPasswordValidity()">
-                    <small id='password_error' class="form-text text-danger"></small>
+                    <small id='password_error' class="form-text text-danger">
+                        {% if errors %}
+                            {% if "password_error" in errors.keys() %}
+                                {{ errors["password_error"] }}
+                            {% endif %}
+                        {% endif %}
+                    </small>
                 </div>
                 <div class="form-group">
                     <label for="password2">Confirm Password</label>
                     <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password" onchange="checkConfirmPasswordValidity()">
-                    <small id='password2_error' class="form-text text-danger"></small>
+                    <small id='password2_error' class="form-text text-danger">
+                        {% if errors %}
+                            {% if "confirm_password_error" in errors.keys() %}
+                                {{ errors["confirm_password_error"] }}
+                            {% endif %}
+                        {% endif %}
+                    </small>
                 </div>
                 <button type="submit" class="btn btn-primary">Register</button>
                 <small class="form-text">By creating your account, you agree to our <a href="">Terms and Conditions</a>.</small>

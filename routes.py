@@ -1,5 +1,6 @@
 from base import *
 from classes import *
+import re
 
 """
 > Web Page Routes
@@ -29,9 +30,14 @@ def login():
                     session["user"] = user
                     return redirect(url_for("index"))
                 else:
-                    return render_template("login.html", error="Email and/or password is invalid.")
+                    return render_template("login.html", 
+                                            error="Email and/or password is invalid.")
         else:
-            return render_template("login.html", error=False)
+            if 'registration_success' in request.args:
+                registration_success = request.args['registration_success']
+                return render_template("login.html", registration_success=registration_success)
+            else:
+                return render_template("login.html")
     else:
         return redirect(url_for("index"))
 
@@ -39,24 +45,49 @@ def login():
 def logout():
     if session.get("user") is not None:
         session.pop("user", None)
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
         
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if session.get("user") is None:
         if request.method == 'POST':
-            name = request.form.get('name')
+            errors = {}
+            name = request.form.get("name")
             email = request.form.get("email")
             password = request.form.get("password")
             confirm_password = request.form.get("password2")
-            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-            new_user = User(email=email, password=password_hash, name=name)
-            new_user.save()
-            return redirect(url_for("index"))
+            if name == "":
+                errors["name_error"] = "Name cannot be empty!"
+            if email == "":
+                errors["email_error"] = "Email cannot be empty!"
+            else:
+                if not re.search('^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$', email):
+                    errors["email_error"] = "Invalid email format!"
+                else:
+                    existing_user = User.objects(email=email).first()
+                    if existing_user:
+                        errors["email_error"] = "Email is already taken!"
+            if password == "":
+                errors["password_error"] = "Password cannot be empty!"
+            else:
+                if not re.search('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[A-z0-9?!@#$%^&*()]{8,}$', password):
+                    errors["password_error"] = "Password must contain a minimum of eight characters, with at least one uppercase letter, one lowercase letter and one number. These are the allowable symbols: ?!@#$%^&*()"
+            if confirm_password == "":
+                errors["confirm_password_error"] = "Confirm Password cannot be empty!"
+            else:
+                if not (password == confirm_password):
+                    errors["confirm_password_error"] = "The password entered does not match the one above."
+            if len(errors) == 0:
+                password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                new_user = User(email=email, password=password_hash, name=name)
+                new_user.save()
+                return redirect(url_for("login", registration_success="Account successfully registered!"))
+            else:
+                return render_template("register.html", errors=errors)
         else:
             return render_template("register.html")
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
 @app.route('/shoppingcart')
 def shopping_cart():
