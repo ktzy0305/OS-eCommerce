@@ -1,5 +1,10 @@
-# KT-Home
-An ecommerce web application hosted using Flask with a MongoDB database.
+# KT-Home (Name Might Change)
+Plans to develop and open source e-commerce API.
+
+## Technology Stack (Might make it flexible)
+- Flask
+- MongoDB
+- Google Cloud Storage
 
 ## Setup
 ### 1. Clone this repository
