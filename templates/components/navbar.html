@@ -12,16 +12,16 @@
                     <a class="nav-link" href="{{ url_for('index') }}"><i class="fa fa-fw fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         Categories
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Electronics</a>
+                        <a class="dropdown-item" href="{{ url_for('category', category_name='Electronics') }}">Electronics</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Kitchen Appliances</a>
+                        <a class="dropdown-item" href="{{ url_for('category', category_name='Kitchen Appliances') }}">Kitchen Appliances</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Furniture</a>
+                        <a class="dropdown-item" href="{{ url_for('category', category_name='Furniture') }}">Furniture</a>
                     </div>
                 </li>
             </ul>
@@ -31,9 +31,6 @@
             </form>
             <ul class="navbar-nav ml-auto">
                 {% if session["user"] %}
-                <!-- <li class="nav-item active">
-                    <a class="nav-link">Welcome, <b>{{ session["user"].name }}</b></a>
-                </li> -->
                 <li class="nav-item active dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">

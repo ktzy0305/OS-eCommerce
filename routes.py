@@ -89,6 +89,10 @@ def register():
     else:
         return redirect(url_for("index"))
 
+@app.route('/category/<string:category_name>')
+def category(category_name):
+    return render_template("category.html")
+
 @app.route('/shoppingcart')
 def shopping_cart():
     if session.get("user") is None:
