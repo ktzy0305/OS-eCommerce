@@ -1,4 +1,4 @@
-# KT-Home (Name Might Change)
+# OS-eCommerce
 Plans to develop and open source e-commerce API.
 
 ## Technology Stack (Might make it flexible)
