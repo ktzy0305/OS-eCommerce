@@ -12,7 +12,7 @@ def index():
                            featured_products=[1,2,3,4,5],
                            new_products=[1,2,3,4,5], 
                            best_selling_products=[1,2,3,4,5], 
-                           all_products=[1,2,3,4,5,6,7,8,9,10,11,12])
+                           all_products=Product.objects())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
