@@ -8,8 +8,9 @@ class Category(db.Document):
 class Product(db.Document):
     title = db.StringField(required=True, max_length=200)
     price = db.FloatField(required=True)
+    quantity = db.IntField(required=True)
     description = db.StringField(required=True, max_length=1000)
-    image_url = db.StringField(default="", max_length=1000)
+    image_url = db.StringField(max_length=1000)
     category = db.ReferenceField(Category)
 
 class User(db.Document):
