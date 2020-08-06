@@ -1,0 +1,33 @@
+.category-card{
+    background-color: rgba(0,0,0,.03);
+}
+
+.category-card-title{
+    padding: 20px 20px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.category-item{
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+}
+
+.category-item:hover{
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+}
+
+.category-image{
+    border-radius: 50%;
+}
+
+.category-image-holder{
+    width: 80px;
+    height: 80px;
+}
+
+.category-name{
+    padding-top: 10px;
+}

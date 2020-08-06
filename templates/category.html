@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Categories{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/category.css') }}">
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/category.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="category-card mt-5">
+        <h5 class="category-card-title text-uppercase">Categories</h5>
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                {% for category in categories %}
+                {% if (loop.index % 2) == 1 %}
+                <div class="swiper-slide">
+                    <div class="category-item">
+                        <div class="category-image-holder d-block mx-auto">
+                            <img class="category-image img-fluid" src="{{ category.image_url }}">
+                        </div>
+                        <div class="category-name text-center">{{ category.name }}</div>
+                    </div>
+                {% endif %}
+                {% if (loop.index % 2) == 0 %}
+                    <div class="category-item">
+                        <div class="category-image-holder d-block mx-auto">
+                            <img class="category-image img-fluid" src="{{ category.image_url }}">
+                        </div>
+                        <div class="category-name text-center">{{ category.name }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <!-- Add Pagination -->
+            <!-- <div class="swiper-pagination"></div> -->
+            <!-- Add Arrows -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

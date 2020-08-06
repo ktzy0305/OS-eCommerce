@@ -44,19 +44,17 @@
                 <div class="row">
                     {% for product in all_products %}
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
-                        <a class="search-result-link" href="">
-                            <div class="product-item">
-                                <img class="img-fluid" src="{{product.image_url}}">
-                                <h5 class="card-title font-weight-bold">{{ product.title }}</h5>
-                                <p>$ {{ '%0.2f'|format(product.price|float) }}</p>
-                                <!-- <div>
-                                    <span class="offer-indicator">On Offer</span>
+                        <a class="product-link" href="">
+                            <div class="card product-item h-100">
+                                <div class="image-container">
+                                    <img class="card-img-top img-fluid product-image" src="{{ product.image_url }}">
+                                    <!-- <span class="offer-indicator">On Offer</span> -->
                                 </div>
-                                <img class="card-img-top search-result-image" src="./Images/products/California_Baby_Shampoo_And_Bodywash-Calming.jpg">
-                                <div class="card-footer search-result-title-container">
-                                    <p class="card-title search-result-product-title">California Baby Shampoo And Bodywash - Calming</p>
-                                    <p class="card-text search-result-price"><s>S$ 28.00</s> <span class="offer-price">S$ 22.90</span></p>
-                                </div> -->
+                                <div class="card-body">
+                                    <p class="product-title">{{ product.title }}</p>
+                                    <p class="card-text product-price">$ {{ '%0.2f'|format(product.price|float) }}</p>
+                                    <!-- <p class="card-text product-price"><s>$ {{ '%0.2f'|format(product.price|float) }}</s> <span class="offer-price">S$ 22.90</span></p> -->
+                                </div>
                             </div>
                         </a>
                     </div>

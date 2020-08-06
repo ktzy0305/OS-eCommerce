@@ -8,11 +8,11 @@ Contains the routes that define each webpage in the web application.
 """
 @app.route('/')
 def index():
-    return render_template("home.html", 
-                           featured_products=[1,2,3,4,5],
-                           new_products=[1,2,3,4,5], 
-                           best_selling_products=[1,2,3,4,5], 
-                           all_products=Product.objects())
+    return render_template("home.html",
+                            featured_products=[1,2,3,4,5],
+                            new_products=[1,2,3,4,5], 
+                            best_selling_products=[1,2,3,4,5], 
+                            all_products=Product.objects())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -89,9 +89,10 @@ def register():
     else:
         return redirect(url_for("index"))
 
-@app.route('/category/<string:category_name>')
-def category(category_name):
-    return render_template("category.html")
+@app.route('/category')
+def category():
+    return render_template("category.html",
+                           categories=Category.objects())
 
 @app.route('/shoppingcart')
 def shopping_cart():

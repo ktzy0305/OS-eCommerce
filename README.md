@@ -20,12 +20,12 @@ pip install -r requirements.txt
 ### 3. Set environment variables for flask
 #### Unix based systems (Linux / MacOS)
 ```
-export FLASK_APP=main.py
+export FLASK_APP=routes.py
 export FLASK_ENV=development
 ```
 #### Windows based systems
 ```
-set FLASK_APP=main.py
+set FLASK_APP=routes.py
 set FLASK_ENV=development
 ```
 ### 4. Start the application

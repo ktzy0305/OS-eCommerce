@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <g id="Logo_Black" data-name="Logo Black" transform="translate(-660 -240)">
+    <g id="Rectangle_1" data-name="Rectangle 1" transform="translate(660 240)" stroke="#707070" stroke-width="1">
+      <rect width="600" height="600" rx="50" stroke="none"/>
+      <rect x="0.5" y="0.5" width="599" height="599" rx="49.5" fill="none"/>
+    </g>
+    <text id="KT" transform="translate(771 647)" fill="#fff" font-size="320" font-family="CerebriSans-Medium, Cerebri Sans" font-weight="500"><tspan x="0" y="0">KT</tspan></text>
+  </g>
+</svg>

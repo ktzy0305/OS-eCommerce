@@ -11,19 +11,23 @@
                 <li class="nav-item {% if url_for(request.endpoint) == url_for('index') %}active{% endif %}">
                     <a class="nav-link" href="{{ url_for('index') }}"><i class="fa fa-fw fa-home"></i> Home</a>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item {% if url_for(request.endpoint) == url_for('category') %}active{% endif %}">
+                    <a class="nav-link" href="{{ url_for('category') }}"><i class="fas fa-layer-group"></i> Categories</a>
+                </li>
+                <!-- <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-layer-group"></i> Categories
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url_for('category', category_name='Electronics') }}">Electronics</a>
+                    <div class="dropdown-menu w-100" aria-labelledby="navbarDropdown">
+                        {% for category in categories %}
+                        <a class="dropdown-item" href="{{ url_for('category', category_name=category.name) }}">{{ category.name }}</a>
+                        {% if loop.index < loop.length %}
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url_for('category', category_name='Kitchen Appliances') }}">Kitchen Appliances</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url_for('category', category_name='Furniture') }}">Furniture</a>
+                        {% endif %}
+                        {% endfor %}
                     </div>
-                </li>
+                </li> -->
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">

@@ -11,12 +11,17 @@ $(document).ready(function () {
                 nav: false,
                 loop: false,
             },
-            768: {
+            576: {
                 items: 2,
                 nav: false,
                 loop: false,
             },
-            1000: {
+            768: {
+                items: 3,
+                nav: false,
+                loop: false,
+            },
+            992: {
                 items: 4,
                 nav: false,
                 loop: false,
