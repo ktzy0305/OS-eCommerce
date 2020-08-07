@@ -4,10 +4,12 @@
 {% block content %}
 <div class="container">
     <div class="row mt-4">
-        <h4>Products related to "{{ category.name }}"</h4>
+        <div class="col-12">
+            <h4>Products related to "{{ category.name }}"</h4>
+        </div>
     </div>
     <div class="row mt-3">
-        {% if products.length == 0 %}
+        {% if products|length == 0 %}
         <div class="col-12">
             <div class="text-danger">
                 No products found.

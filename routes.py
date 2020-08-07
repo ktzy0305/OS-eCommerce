@@ -104,7 +104,6 @@ def product_search():
 @app.route('/products/<string:product_id>')
 def product_info(product_id):
     product = Product.objects(id=product_id).first()
-    # return jsonify(product)
     return render_template("product/details.html", product=product)
 
 @app.route('/shoppingcart')

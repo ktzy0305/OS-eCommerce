@@ -1,15 +1,84 @@
 {% extends "base.html" %}
 {% block title %}{{ product.title }}{% endblock %}
-<!-- {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/category.css') }}">
-{% endblock %} -->
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_details.css') }}">
+{% endblock %}
 <!-- {% block scripts %}
 <script src="{{ url_for('static', filename='js/category.js') }}"></script>
 {% endblock %} -->
 {% block content %}
 <div class="container">
-    {{ product.title }}
-    <br>
-    {{ product.price }}
+    <div class="mt-5 info-card">
+        <div class="row">
+            <div class="col-md-5 col-sm-4">
+                <img class="img-fluid" src="{{ product.image_url }}">
+            </div>
+            <div class="col-md-7 col-sm-8">
+                <div class="product-title">
+                    {{ product.title }}
+                </div>
+                <div class="product-price">
+                    $ {{ '%0.2f'|format(product.price|float) }}
+                </div>
+                <div class="add-product mt-3">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Shipping</td>
+                                <td colspan="2">
+                                    Free Shipping
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Specification</td>
+                                <td colspan="2">
+                                    <button class="product-variation">XS</button>
+                                    <button class="product-variation">S</button>
+                                    <button class="product-variation">M</button>
+                                    <button class="product-variation">L</button>
+                                    <button class="product-variation">XL</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Quantity</td>
+                                <td><input class="form-control" type="number" name="quantity" style="width: 80px;" value="1" min="1" max="10" required=""></td>
+                                <td>{{ product.quantity }} piece(s) available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary mt-3">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-3 row">
+        <div class="col-12">
+            <div class="info-card">
+                <div class="info-card-section-title">
+                    Product Specifications
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Category: </td>
+                            <td>{{ product.category.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Brand: </td>
+                            <td>No Brand</td>
+                        </tr>
+                        <tr>
+                            <td>Warranty: </td>
+                            <td>No Warranty</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="info-card-section-title">
+                    Product Description
+                </div>
+                <p>{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
