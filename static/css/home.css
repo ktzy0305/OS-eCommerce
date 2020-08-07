@@ -13,6 +13,14 @@ body > div.container > div > div > div:nth-child(1) > h2{
     margin: 32px, 0px;
 }
 
+.product-item:hover{
+    position: relative;
+    top: -2.5px;
+    outline: none;
+    border-color: #e2e2e2;
+    box-shadow: 0 0 10px #e2e2e2;
+}
+
 .product-image{
     width: 100%;
     height: 260px;
@@ -22,7 +30,7 @@ body > div.container > div > div > div:nth-child(1) > h2{
     font-size: 1.1em;
     font-weight: 600;
     min-height: 3.2em;
-    text-align: justify;
+    word-wrap: break-word;
 }
 
 a.product-link{

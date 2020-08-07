@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ product.title }}{% endblock %}
+<!-- {% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/category.css') }}">
+{% endblock %} -->
+<!-- {% block scripts %}
+<script src="{{ url_for('static', filename='js/category.js') }}"></script>
+{% endblock %} -->
+{% block content %}
+<div class="container">
+    {{ product.title }}
+    <br>
+    {{ product.price }}
+</div>
+{% endblock %}

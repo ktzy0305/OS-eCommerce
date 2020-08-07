@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Search '{{ category.name }}'{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        <h4>Products related to "{{ category.name }}"</h4>
+    </div>
+    <div class="row mt-3">
+        {% if products.length == 0 %}
+        <div class="col-12">
+            <div class="text-danger">
+                No products found.
+            </div>
+        </div>
+        {% else %}
+        {% for product in products %}
+        <div class="col-md-3">
+            <div class="card product-item h-100">
+                <div class="product-image">
+                    <img class="card-img-top" src="{{ product.image_url }}">
+                </div>
+                <div class="card-body">
+                    <div class="product-title">
+                        {{ product.title }}
+                    </div>
+                    <div class="product-price">
+                        $ {{ '%0.2f'|format(product.price|float) }}
+                    </div>
+                </div>
+            </div> 
+        </div>   
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

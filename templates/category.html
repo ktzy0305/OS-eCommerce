@@ -16,20 +16,24 @@
                 {% for category in categories %}
                 {% if (loop.index % 2) == 1 %}
                 <div class="swiper-slide">
-                    <div class="category-item">
-                        <div class="category-image-holder d-block mx-auto">
-                            <img class="category-image img-fluid" src="{{ category.image_url }}">
+                    <a class="category-link" href="{{ url_for('product_search', category_name=category.name) }}">
+                        <div class="category-item">
+                            <div class="category-image-holder d-block mx-auto">
+                                <img class="category-image img-fluid" src="{{ category.image_url }}">
+                            </div>
+                            <div class="category-name text-center">{{ category.name }}</div>
                         </div>
-                        <div class="category-name text-center">{{ category.name }}</div>
-                    </div>
+                    </a>
                 {% endif %}
                 {% if (loop.index % 2) == 0 %}
-                    <div class="category-item">
-                        <div class="category-image-holder d-block mx-auto">
-                            <img class="category-image img-fluid" src="{{ category.image_url }}">
+                    <a class="category-link" href="{{ url_for('product_search', category_name=category.name) }}">
+                        <div class="category-item">
+                            <div class="category-image-holder d-block mx-auto">
+                                <img class="category-image img-fluid" src="{{ category.image_url }}">
+                            </div>
+                            <div class="category-name text-center">{{ category.name }}</div>
                         </div>
-                        <div class="category-name text-center">{{ category.name }}</div>
-                    </div>
+                    </a>
                 </div>
                 {% endif %}
                 {% endfor %}

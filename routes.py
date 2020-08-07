@@ -89,10 +89,23 @@ def register():
     else:
         return redirect(url_for("index"))
 
-@app.route('/category')
+@app.route('/categories')
 def category():
     return render_template("category.html",
                            categories=Category.objects())
+
+@app.route('/products/search')
+def product_search():
+    category_name = request.args.get('category_name') 
+    category = Category.objects(name=category_name).first()
+    products = Product.objects(category=category)
+    return render_template('product/search.html', products=products, category=category)
+
+@app.route('/products/<string:product_id>')
+def product_info(product_id):
+    product = Product.objects(id=product_id).first()
+    # return jsonify(product)
+    return render_template("product/details.html", product=product)
 
 @app.route('/shoppingcart')
 def shopping_cart():
