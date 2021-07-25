@@ -113,6 +113,19 @@ def shopping_cart():
     else:
         return render_template("shoppingcart.html")
 
+@app.route('/addtocart', methods=['POST'])
+def add_to_cart():
+    if session.get("shopping_cart") is None:
+        session["shopping_cart"] = []
+
+    product_id = request.form["product_id"]
+    quantity = request.form["quantity"]
+    product = Product.objects(id=product_id).first()
+    shopping_cart = session["shopping_cart"]
+    shopping_cart.append([product, quantity])
+    session["shopping_cart"] = shopping_cart
+    return redirect(url_for("shopping_cart"))
+
 @app.route('/userprofile')
 def user_profile():
     return render_template("profile.html")
@@ -125,7 +138,7 @@ def user_profile():
 Contains the endpoints for mobile applications to perform user functionality
 of this web application.
 """
-@app.route(API_BASE_URL+'/login')
+@app.route(API_BASE_URL+'/login', methods=['POST'])
 def api_login():
     email = request.args.get("email")
     password = request.args.get("password")
@@ -167,6 +180,11 @@ def api_delete_user(user_id):
     user = User.objects.get(id=user_id)
     user.delete()
     return 'Delete Successful!'.format(), 200
+
+@app.route(API_BASE_URL+'/products', methods=['GET'])
+def api_products():
+    products = Product.objects
+    return jsonify(products), 200
 
 if __name__ == "__main__":
     app.run()

@@ -47,7 +47,11 @@
                         <a class="product-link" href="{{ url_for('product_info', product_id=product.id) }}">
                             <div class="card product-item h-100">
                                 <div class="image-container">
+                                    {% if product.image_url %}
                                     <img class="card-img-top img-fluid product-image" src="{{ product.image_url }}">
+                                    {% else %}
+                                    <img class="card-img-top img-fluid product-image" src="{{ url_for('static', filename='images/no-image.jpg') }}">
+                                    {% endif %}
                                     <!-- <span class="offer-indicator">On Offer</span> -->
                                 </div>
                                 <div class="card-body">
