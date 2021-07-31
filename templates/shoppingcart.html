@@ -25,6 +25,7 @@
                             <th class="text-uppercase table-col-header">Price</th>
                             <th class="text-uppercase table-col-header">Quantity</th>
                             <th class="text-uppercase table-col-header">Amount</th>
+                            <th class="text-uppercase table-col-header"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,8 +35,9 @@
                                 <td colspan="1"></td>
                                 <td>{{ item[0].title }}</td>
                                 <td>$ {{ '%0.2f'|format(item[0].price|float) }}</td>
-                                <td>{{ item[1] }}</td>
+                                <td><input class="form-control" style="width: 80px;" type="number" value="{{ item[1] }}" min="1" max="10"></td>
                                 <td>$ {{ '%0.2f'|format(item[0].price*item[1]|float) }}</td>
+                                <td><a class="btn btn-danger text-white" role="button">Remove</a></td>
                             </tr>
                             {% endfor %}
                         {% else %}
@@ -46,7 +48,7 @@
                         {% endif %}
                     </tbody>
                 </table>
-                <p style="text-align: right;">Total: $123.23</p>
+                <p style="text-align: right;">Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p>
             </div>
             <div class="card-footer">
                 <button class="btn btn-success float-right">Check Out</button>

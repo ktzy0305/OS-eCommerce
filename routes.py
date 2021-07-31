@@ -44,7 +44,9 @@ def login():
 @app.route('/logout')
 def logout():
     if session.get("user") is not None:
+        session.pop("shopping_cart", None)
         session.pop("user", None)
+        session.pop("total_price", None)
     return redirect(url_for("index"))
         
 @app.route('/register', methods=['GET', 'POST'])
@@ -111,19 +113,38 @@ def shopping_cart():
     if session.get("user") is None:
         return redirect(url_for("index"))
     else:
+        if session.get("shopping_cart") is None:
+            session["shopping_cart"] = []
+            session["total_price"] = 0
         return render_template("shoppingcart.html")
 
 @app.route('/addtocart', methods=['POST'])
 def add_to_cart():
+    # Check if shopping cart session is empty
     if session.get("shopping_cart") is None:
         session["shopping_cart"] = []
+        session["total_price"] = 0
 
+    # Product information to be added into cart
     product_id = request.form["product_id"]
     quantity = request.form["quantity"]
     product = Product.objects(id=product_id).first()
+
     shopping_cart = session["shopping_cart"]
-    shopping_cart.append([product, quantity])
+
+    existing_product_found = False
+    for item in shopping_cart:
+        if item[0]['_id']['$oid'] == product_id:
+            current_quantity = item[1]
+            item[1] = current_quantity + int(quantity)
+            existing_product_found = True
+            break
+
+    if not existing_product_found:
+        shopping_cart.append([product, int(quantity)])
+    
     session["shopping_cart"] = shopping_cart
+    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart])
     return redirect(url_for("shopping_cart"))
 
 @app.route('/userprofile')
