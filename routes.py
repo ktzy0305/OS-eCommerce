@@ -120,6 +120,10 @@ def shopping_cart():
 
 @app.route('/addtocart', methods=['POST'])
 def add_to_cart():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     # Check if shopping cart session is empty
     if session.get("shopping_cart") is None:
         session["shopping_cart"] = []
@@ -130,21 +134,35 @@ def add_to_cart():
     quantity = request.form["quantity"]
     product = Product.objects(id=product_id).first()
 
+    # Get Items From Shopping Cart
     shopping_cart = session["shopping_cart"]
 
-    existing_product_found = False
     for item in shopping_cart:
         if item[0]['_id']['$oid'] == product_id:
             current_quantity = item[1]
             item[1] = current_quantity + int(quantity)
-            existing_product_found = True
             break
 
-    if not existing_product_found:
+    else:
         shopping_cart.append([product, int(quantity)])
     
     session["shopping_cart"] = shopping_cart
-    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart])
+    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart]) if len(shopping_cart) > 0 else 0
+    return redirect(url_for("shopping_cart"))
+
+@app.route('/removefromcart/<string:product_id>')
+def remove_from_cart(product_id):
+    # Get Items From Shopping Cart
+    shopping_cart = session["shopping_cart"]
+    
+    for item in shopping_cart:
+        if item[0]['_id']['$oid'] == product_id:
+            shopping_cart.remove(item)
+            break
+    
+    session["shopping_cart"] = shopping_cart
+    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart]) if len(shopping_cart) > 0 else 0
+
     return redirect(url_for("shopping_cart"))
 
 @app.route('/userprofile')
