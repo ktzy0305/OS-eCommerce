@@ -150,6 +150,27 @@ def add_to_cart():
     session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart]) if len(shopping_cart) > 0 else 0
     return redirect(url_for("shopping_cart"))
 
+@app.route('/updatecart', methods=["POST"])
+def update_cart():
+    # Information to be updated
+    product_id = request.form["product_id"]
+    new_product_quantity = request.form["product_quantity"]
+
+    # Get Items From Shopping Cart
+    shopping_cart = session["shopping_cart"]
+
+    for item in shopping_cart:
+        if item[0]['_id']['$oid'] == product_id:
+            current_quantity = item[1]
+            item[1] = int(new_product_quantity)
+            break
+
+    session["shopping_cart"] = shopping_cart
+    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart]) if len(shopping_cart) > 0 else 0
+
+    return redirect(url_for("shopping_cart"))
+
+
 @app.route('/removefromcart/<string:product_id>')
 def remove_from_cart(product_id):
     # Get Items From Shopping Cart
