@@ -8,6 +8,10 @@ Contains the routes that define each webpage in the web application.
 """
 @app.route('/')
 def index():
+    if session.get("user"):
+        user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+        session["shopping_cart"] = user.shopping_cart
+
     return render_template("home.html",
                             featured_products=[1,2,3,4,5],
                             new_products=[1,2,3,4,5], 
@@ -44,8 +48,8 @@ def login():
 @app.route('/logout')
 def logout():
     if session.get("user") is not None:
-        session.pop("shopping_cart", None)
         session.pop("user", None)
+        session.pop("shopping_cart", None)
         session.pop("total_price", None)
     return redirect(url_for("index"))
         
@@ -113,9 +117,9 @@ def shopping_cart():
     if session.get("user") is None:
         return redirect(url_for("index"))
     else:
-        if session.get("shopping_cart") is None:
-            session["shopping_cart"] = []
-            session["total_price"] = 0
+        user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+        session["shopping_cart"] = user.shopping_cart
+        session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
         return render_template("shoppingcart.html")
 
 @app.route('/addtocart', methods=['POST'])
@@ -123,66 +127,82 @@ def add_to_cart():
     # Check if user is logged in
     if session.get("user") is None:
         return redirect(url_for("login"))
-
-    # Check if shopping cart session is empty
-    if session.get("shopping_cart") is None:
-        session["shopping_cart"] = []
-        session["total_price"] = 0
+    
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
 
     # Product information to be added into cart
     product_id = request.form["product_id"]
     quantity = request.form["quantity"]
-    product = Product.objects(id=product_id).first()
+    product_to_add = Product.objects(id=product_id).first()
 
-    # Get Items From Shopping Cart
-    shopping_cart = session["shopping_cart"]
-
-    for item in shopping_cart:
-        if item[0]['_id']['$oid'] == product_id:
-            current_quantity = item[1]
-            item[1] = current_quantity + int(quantity)
+    # Check if the product to add already exist in cart, if exists add to current quantity.
+    for item in user.shopping_cart:
+        if item["product"].id == product_to_add.id:
+            current_quantity = item["quantity"]
+            new_quantity = current_quantity + int(quantity)
+            item["quantity"] = new_quantity
+            item["total_amount"] = item["price"] * new_quantity
+            user.save()
             break
 
     else:
-        shopping_cart.append([product, int(quantity)])
+        product_to_add = CartProduct(
+                product=product_to_add, 
+                title=product_to_add["title"], 
+                price=product_to_add["price"],
+                quantity=int(quantity),
+                total_amount = product_to_add["price"] * int(quantity)
+        )
+        user.shopping_cart.append(product_to_add)
+        user.save()
     
-    session["shopping_cart"] = shopping_cart
-    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart]) if len(shopping_cart) > 0 else 0
+    session["shopping_cart"] = user.shopping_cart
+    session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
     return redirect(url_for("shopping_cart"))
 
 @app.route('/updatecart', methods=["POST"])
 def update_cart():
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
     # Information to be updated
     product_id = request.form["product_id"]
+    product_to_modify = Product.objects(id=product_id).first()
     new_product_quantity = request.form["product_quantity"]
 
-    # Get Items From Shopping Cart
-    shopping_cart = session["shopping_cart"]
-
-    for item in shopping_cart:
-        if item[0]['_id']['$oid'] == product_id:
-            current_quantity = item[1]
-            item[1] = int(new_product_quantity)
+    # Update the quantity of the product in cart
+    for item in user.shopping_cart:
+        if item["product"].id == product_to_modify.id:
+            item["quantity"] = int(new_product_quantity)
+            item["total_amount"] = item["price"] * int(new_product_quantity)
+            user.save()
             break
 
-    session["shopping_cart"] = shopping_cart
-    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart]) if len(shopping_cart) > 0 else 0
+    session["shopping_cart"] = user.shopping_cart
+    session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
+    user.save()
 
     return redirect(url_for("shopping_cart"))
 
 
 @app.route('/removefromcart/<string:product_id>')
 def remove_from_cart(product_id):
-    # Get Items From Shopping Cart
-    shopping_cart = session["shopping_cart"]
-    
-    for item in shopping_cart:
-        if item[0]['_id']['$oid'] == product_id:
-            shopping_cart.remove(item)
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Product
+    product_to_remove = Product.objects(id=product_id).first()
+
+    # Find item to remove
+    for item in user.shopping_cart:
+        if item["product"].id == product_to_remove.id:
+            user.shopping_cart.remove(item)
+            user.save()
             break
     
-    session["shopping_cart"] = shopping_cart
-    session["total_price"] = sum([item[0]["price"]*item[1] for item in shopping_cart]) if len(shopping_cart) > 0 else 0
+    session["shopping_cart"] = user.shopping_cart
+    session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
 
     return redirect(url_for("shopping_cart"))
 
