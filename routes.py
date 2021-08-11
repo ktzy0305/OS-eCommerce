@@ -208,7 +208,9 @@ def remove_from_cart(product_id):
 
 @app.route('/userprofile')
 def user_profile():
-    return render_template("profile.html")
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+    return render_template("profile.html", user=user)
 
 
 
@@ -265,6 +267,12 @@ def api_delete_user(user_id):
 def api_products():
     products = Product.objects
     return jsonify(products), 200
+
+@app.route(API_BASE_URL+'/shoppingcart/<string:user_id>', methods=['GET'])
+def api_get_shopping_cart(user_id):
+    data = request.get_json()
+    user = User.objects.get(id=user_id)
+    return jsonify(user.shopping_cart)
 
 if __name__ == "__main__":
     app.run()
