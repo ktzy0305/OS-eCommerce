@@ -112,7 +112,7 @@ def product_info(product_id):
     product = Product.objects(id=product_id).first()
     return render_template("product/details.html", product=product)
 
-@app.route('/shoppingcart')
+@app.route('/cart')
 def shopping_cart():
     if session.get("user") is None:
         return redirect(url_for("index"))
@@ -122,7 +122,7 @@ def shopping_cart():
         session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
         return render_template("shoppingcart.html")
 
-@app.route('/addtocart', methods=['POST'])
+@app.route('/cart/add', methods=['POST'])
 def add_to_cart():
     # Check if user is logged in
     if session.get("user") is None:
@@ -161,7 +161,7 @@ def add_to_cart():
     session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
     return redirect(url_for("shopping_cart"))
 
-@app.route('/updatecart', methods=["POST"])
+@app.route('/cart/update', methods=["POST"])
 def update_cart():
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
@@ -186,7 +186,7 @@ def update_cart():
     return redirect(url_for("shopping_cart"))
 
 
-@app.route('/removefromcart/<string:product_id>')
+@app.route('/cart/remove/<string:product_id>')
 def remove_from_cart(product_id):
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
@@ -206,13 +206,15 @@ def remove_from_cart(product_id):
 
     return redirect(url_for("shopping_cart"))
 
-@app.route('/userprofile')
+@app.route('/user/profile')
 def user_profile():
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
     return render_template("profile.html", user=user)
 
-
+@app.route('/user/orders')
+def user_orders():
+    return render_template("orders.html")
 
 
 """
