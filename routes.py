@@ -110,7 +110,11 @@ def product_search():
 @app.route('/products/<string:product_id>')
 def product_info(product_id):
     product = Product.objects(id=product_id).first()
-    return render_template("product/details.html", product=product)
+    if 'error_message' in  request.args:
+        error_message = request.args['error_message']
+        return render_template("product/details.html", product=product, error_message=error_message)
+    else:
+        return render_template("product/details.html", product=product)
 
 @app.route('/cart')
 def shopping_cart():
@@ -135,6 +139,12 @@ def add_to_cart():
     product_id = request.form["product_id"]
     quantity = request.form["quantity"]
     product_to_add = Product.objects(id=product_id).first()
+
+    # Check if product has enough stock left
+    if product_to_add.quantity < int(quantity):
+        print("Issue")
+        error_message = "Sorry, there is insufficient quantity available for this product."
+        return redirect(url_for("product_info", product_id=product_id, error_message = error_message))
 
     # Check if the product to add already exist in cart, if exists add to current quantity.
     for item in user.shopping_cart:
@@ -205,6 +215,14 @@ def remove_from_cart(product_id):
     session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
 
     return redirect(url_for("shopping_cart"))
+
+@app.route('/checkout')
+def checkout():
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+    checkout_items = user.shopping_cart
+
+    return render_template('checkout.html', checkout_items=checkout_items)
 
 @app.route('/user/profile')
 def user_profile():

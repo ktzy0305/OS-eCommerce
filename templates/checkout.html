@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('shopping_cart') }}">Shopping Cart</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Checkout</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase table-col-header">Products Ordered</th>
+                                <th class="text-uppercase table-col-header">Unit Price</th>
+                                <th class="text-uppercase table-col-header">Quantity</th>
+                                <th class="text-uppercase table-col-header">Item Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in checkout_items %}
+                            <tr>
+                                <td>{{ item['title'] }}</td>
+                                <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
+                                <td>{{ item['quantity'] }}</td>
+                                <td>$ {{ '%0.2f'|format(item['total_amount']|float) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p style="text-align: right;">Order Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-success float-right text-white">Place Order</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

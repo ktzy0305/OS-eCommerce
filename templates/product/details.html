@@ -8,6 +8,14 @@
 {% endblock %} -->
 {% block content %}
 <div class="container">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+      {{ error_message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endif %}
     <div class="mt-5 info-card">
         <div class="row">
             <div class="col-md-5 col-sm-4">
