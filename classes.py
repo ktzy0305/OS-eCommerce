@@ -20,6 +20,16 @@ class CartProduct(db.EmbeddedDocument):
     quantity = db.IntField(required=True)
     total_amount = db.FloatField(required=True)
 
+class Address(db.EmbeddedDocument):
+    country = db.StringField(required=True, max_length=200)
+    city = db.StringField(required=True, max_length=200)
+    street = db.StringField(required=True, max_length=200)
+    unit = db.StringField(required=True, max_length=200)
+    postal_code = db.StringField(required=True, max_length=200)
+
+class Order(db.Document):
+    pass
+
 class User(db.Document):
     email = db.EmailField(required=True, max_length=100)
     password = db.StringField(required=True, max_length=128)
@@ -27,3 +37,4 @@ class User(db.Document):
     role = db.StringField(default="USER", required=True, max_length=50)
     registered_on = db.DateTimeField(default=datetime.now())
     shopping_cart = db.ListField(db.EmbeddedDocumentField(CartProduct))
+    address_list = db.ListField(db.EmbeddedDocumentField(Address))

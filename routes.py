@@ -1,3 +1,4 @@
+from typing import NewType
 from base import *
 from classes import *
 import re
@@ -222,13 +223,38 @@ def checkout():
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
     checkout_items = user.shopping_cart
 
-    return render_template('checkout.html', checkout_items=checkout_items)
+    return render_template('checkout.html', checkout_items=checkout_items, user=user)
 
 @app.route('/user/profile')
 def user_profile():
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
     return render_template("profile.html", user=user)
+
+@app.route('/user/address/add', methods=["POST"])
+def add_address():
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+    # Product information to be added into cart
+    street = request.form["street"]
+    unit = request.form["unit"]
+    postal_code = request.form["postal_code"]
+    country = request.form["country"]
+    city = request.form["city"]
+
+    # Create address object
+    new_address = Address(
+        country = country,
+        city = city,
+        street = street,
+        unit = unit,
+        postal_code = postal_code
+    )
+    # Add to user's address list
+    user.address_list.append(new_address)
+    user.save()
+
+    return redirect(url_for("user_profile"))
 
 @app.route('/user/orders')
 def user_orders():

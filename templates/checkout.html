@@ -20,6 +20,22 @@
                     <h3 class="card-title">Checkout</h3>
                 </div>
                 <div class="card-body">
+                    <!-- Delivery Address -->
+                    <h5>Delivery Address</h3>
+                    {% if user.address_list|length > 0 %}
+                    <address>
+                        <address>
+                            {{ user.address_list[0].street }}, {{user.address_list[0].unit}}
+                            <br>
+                            {{ user.address_list[0].postal_code }}
+                            <br>
+                            {{ user.address_list[0].city }}, {{ user.address_list[0].country }}
+                        </address>
+                    </address>
+                    {% else %}
+                    <div class="alert alert-danger">Please add a delivery address!</div>
+                    {% endif %}
+                    <!-- Order Summary -->
                     <table class="table table-sm table-hover">
                         <thead>
                             <tr>
@@ -43,6 +59,7 @@
                     <p style="text-align: right;">Order Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p>
                 </div>
                 <div class="card-footer">
+                    <!-- Payment Method -->
                     <a class="btn btn-success float-right text-white">Place Order</a>
                 </div>
             </div>
