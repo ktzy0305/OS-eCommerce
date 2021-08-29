@@ -1,8 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
+{% block title %}Orders{% endblock %}
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
 {% endblock %}
-
 {% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+        </ol>
+    </nav>
+    <div class="row mt-3">
+        {% for order in orders %}
+            <div class="card col-6">
+                <div class="card-header">
+                    <h4 class="card-title">Order: {{ order.id }}</h4>
+                    <div>Date Created: {{ order.date_created }}</div>
+                </div>
+                <div class="card-body">
+                    <div>Total Items: {{ order.ordered_products | length }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

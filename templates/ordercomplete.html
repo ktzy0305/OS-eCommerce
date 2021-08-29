@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Order Completed{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/order_complete.css') }}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="alert alert-success" role="alert">
+                Payment Successful! Order has been made!    
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4>Order Summary</h4>
+                    <hr>
+                    <p>Order ID: {{ order.id }}</p>
+                    <!-- Order Summary -->
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase table-col-header">Products Ordered</th>
+                                <th class="text-uppercase table-col-header">Unit Price</th>
+                                <th class="text-uppercase table-col-header">Quantity</th>
+                                <th class="text-uppercase table-col-header">Item Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in order.ordered_products %}
+                            <tr>
+                                <td>{{ item['title'] }}</td>
+                                <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
+                                <td>{{ item['quantity'] }}</td>
+                                <td>$ {{ '%0.2f'|format(item['total_amount']|float) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div style="text-align: right;">Order Total: ${{ '%0.2f'|format(order.total_amount) }}</div>
+                    <div style="text-align: right;">Amount Paid: ${{ '%0.2f'|format(order.total_amount) }}</div>
+                </div>
+                <a href="{{ url_for('index') }}" class="mx-auto btn btn-primary text-white">Return to Home Page</a>
+                <br/>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

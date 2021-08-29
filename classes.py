@@ -27,9 +27,6 @@ class Address(db.EmbeddedDocument):
     unit = db.StringField(required=True, max_length=200)
     postal_code = db.StringField(required=True, max_length=200)
 
-class Order(db.Document):
-    pass
-
 class User(db.Document):
     email = db.EmailField(required=True, max_length=100)
     password = db.StringField(required=True, max_length=128)
@@ -38,3 +35,10 @@ class User(db.Document):
     registered_on = db.DateTimeField(default=datetime.now())
     shopping_cart = db.ListField(db.EmbeddedDocumentField(CartProduct))
     address_list = db.ListField(db.EmbeddedDocumentField(Address))
+
+class Order(db.Document):
+    created_by = db.ReferenceField(User)
+    date_created = db.DateTimeField(required=True)
+    ordered_products = db.ListField(db.EmbeddedDocumentField(CartProduct))
+    total_amount = db.FloatField(required=True)
+    delivery_address = db.EmbeddedDocumentField(Address)

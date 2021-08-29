@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Shopping Cart{% endblock %}
+{% block title %}Check Out{% endblock %}
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
 {% endblock %}
@@ -23,15 +23,25 @@
                     <!-- Delivery Address -->
                     <h5>Delivery Address</h3>
                     {% if user.address_list|length > 0 %}
-                    <address>
-                        <address>
-                            {{ user.address_list[0].street }}, {{user.address_list[0].unit}}
-                            <br>
-                            {{ user.address_list[0].postal_code }}
-                            <br>
-                            {{ user.address_list[0].city }}, {{ user.address_list[0].country }}
-                        </address>
-                    </address>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td>
+                                <address>
+                                    <address>
+                                        {{ user.address_list[0].street }}, {{user.address_list[0].unit}}
+                                        <br>
+                                        {{ user.address_list[0].postal_code }}
+                                        <br>
+                                        {{ user.address_list[0].city }}, {{ user.address_list[0].country }}
+                                    </address>
+                                </address>
+                            </td>
+                            <td class="font-weight-bold">Default Address</td>
+                            <td>
+                                <a role="button" class="btn btn-secondary text-white">Change</a>
+                            </td>
+                        </tr>
+                    </table>
                     {% else %}
                     <div class="alert alert-danger">Please add a delivery address!</div>
                     {% endif %}
@@ -53,14 +63,14 @@
                                 <td>{{ item['quantity'] }}</td>
                                 <td>$ {{ '%0.2f'|format(item['total_amount']|float) }}</td>
                             </tr>
-                            {% endfor %}
+                        {% endfor %}
                         </tbody>
                     </table>
                     <p style="text-align: right;">Order Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p>
                 </div>
                 <div class="card-footer">
                     <!-- Payment Method -->
-                    <a class="btn btn-success float-right text-white">Place Order</a>
+                    <a class="btn btn-success float-right text-white" href="{{ url_for('place_order') }}">Place Order</a>
                 </div>
             </div>
         </div>

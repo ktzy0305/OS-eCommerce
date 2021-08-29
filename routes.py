@@ -1,4 +1,3 @@
-from typing import NewType
 from base import *
 from classes import *
 import re
@@ -225,6 +224,42 @@ def checkout():
 
     return render_template('checkout.html', checkout_items=checkout_items, user=user)
 
+@app.route('/order/processing')
+def place_order():
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Create Order Object
+    order = Order(
+        created_by = user,
+        date_created = datetime.now(),
+        ordered_products = user.shopping_cart,
+        total_amount = session.get('total_price'),
+        delivery_address = user.address_list[0]
+    )
+
+    # Save Order Object
+    order.save()
+
+    # Clear user shopping cart
+    del user.shopping_cart
+
+    # Save User State
+    user.save()
+
+    # Reset Total Price
+    session['total_price'] = 0
+
+    # Pass Order object to order complete page
+    return redirect(url_for('order_complete', order_id = order.id))
+
+@app.route('/order/complete')
+def order_complete():
+    order_id = request.args['order_id']
+    order = Order.objects(id=order_id).first()
+    print(order)
+    return render_template('ordercomplete.html', order=order)
+
 @app.route('/user/profile')
 def user_profile():
     # User
@@ -235,7 +270,8 @@ def user_profile():
 def add_address():
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
-    # Product information to be added into cart
+    
+    # Address information
     street = request.form["street"]
     unit = request.form["unit"]
     postal_code = request.form["postal_code"]
@@ -256,9 +292,64 @@ def add_address():
 
     return redirect(url_for("user_profile"))
 
+@app.route('/user/address/edit/<string:index>', methods=["POST"])
+def edit_address(index):
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Index
+    index_to_edit= int(index) - 1
+
+    # Address information
+    street = request.form["street"]
+    unit = request.form["unit"]
+    postal_code = request.form["postal_code"]
+    country = request.form["country"]
+    city = request.form["city"]
+
+    # Create updated address object
+    updated_address = Address(
+        country = country,
+        city = city,
+        street = street,
+        unit = unit,
+        postal_code = postal_code
+    )
+
+    # Update the address
+    user.address_list[index_to_edit] = updated_address
+
+    # Save Changes
+    user.save()
+
+    return redirect(url_for("user_profile"))
+
+@app.route('/user/address/remove/<string:index>')
+def remove_address(index):
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Index
+    index_to_remove = int(index) - 1
+
+    # Removal
+    del user.address_list[index_to_remove]
+
+    # Save Changes
+    user.save()
+
+    return redirect(url_for("user_profile"))
+
+
 @app.route('/user/orders')
 def user_orders():
-    return render_template("orders.html")
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Orders made by user
+    user_orders = Order.objects(created_by = user)
+
+    return render_template("orders.html", orders = user_orders)
 
 
 """
