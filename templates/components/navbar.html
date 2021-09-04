@@ -15,8 +15,8 @@
                     <a class="nav-link" href="{{ url_for('category') }}"><i class="fas fa-layer-group"></i> Categories</a>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="form-inline my-2 my-lg-0" action="{{ url_for('product_search') }}" method="GET">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search Products" aria-label="Search" name="query" id="query">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i> Search</button>
             </form>
             <ul class="navbar-nav ml-auto">

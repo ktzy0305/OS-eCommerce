@@ -13,13 +13,34 @@
     </nav>
     <div class="row mt-3">
         {% for order in orders %}
-            <div class="card col-6">
+            <div class="card col-12 mb-4">
                 <div class="card-header">
                     <h4 class="card-title">Order: {{ order.id }}</h4>
-                    <div>Date Created: {{ order.date_created }}</div>
+                    <div>Order Date: {{ order.date_created }}</div>
                 </div>
                 <div class="card-body">
-                    <div>Total Items: {{ order.ordered_products | length }}</div>
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase table-col-header">Products Ordered</th>
+                                <th class="text-uppercase table-col-header">Unit Price</th>
+                                <th class="text-uppercase table-col-header">Quantity</th>
+                                <th class="text-uppercase table-col-header">Item Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in order.ordered_products %}
+                            <tr>
+                                <td>{{ item['title'] }}</td>
+                                <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
+                                <td>{{ item['quantity'] }}</td>
+                                <td>$ {{ '%0.2f'|format(item['total_amount']|float) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div style="text-align: right;">Order Total: ${{ '%0.2f'|format(order.total_amount) }}</div>
+                    <div style="text-align: right;">Amount Paid: ${{ '%0.2f'|format(order.total_amount) }}</div>
                 </div>
             </div>
         {% endfor %}

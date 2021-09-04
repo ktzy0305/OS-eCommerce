@@ -1,3 +1,4 @@
+from os import name
 from base import *
 from classes import *
 import re
@@ -102,10 +103,15 @@ def category():
 
 @app.route('/products/search')
 def product_search():
+    query = request.args.get('query')
     category_name = request.args.get('category_name') 
-    category = Category.objects(name=category_name).first()
-    products = Product.objects(category=category)
-    return render_template('product/search.html', products=products, category=category)
+    if query:
+        products = Product.objects.filter(title__icontains=query)
+        return render_template('product/search.html', products=products, query=query)
+    else:
+        category = Category.objects(name=category_name).first()
+        products = Product.objects(category=category)
+        return render_template('product/search.html', products=products, category=category)
 
 @app.route('/products/<string:product_id>')
 def product_info(product_id):
