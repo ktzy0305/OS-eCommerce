@@ -268,12 +268,20 @@ def order_complete():
 
 @app.route('/user/profile')
 def user_profile():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
     return render_template("profile.html", user=user)
 
 @app.route('/user/address/add', methods=["POST"])
 def add_address():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
     
@@ -349,6 +357,10 @@ def remove_address(index):
 
 @app.route('/user/orders')
 def user_orders():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
 

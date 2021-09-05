@@ -38,10 +38,6 @@ a.product-link{
     color: black;
 }
 
-a.product-link:hover{
-    /* color: aqua; */
-}
-
 span.offer-indicator{
     position: absolute;
     top: 0;
