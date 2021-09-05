@@ -38,10 +38,6 @@ a.product-link{
     color: black;
 }
 
-a.product-link:hover{
-    /* color: aqua; */
-}
-
 span.offer-indicator{
     position: absolute;
     top: 0;
@@ -124,6 +120,10 @@ span.offer-price{
 
 
 @media only screen and (max-width: 440px)  {
+    .product-item{
+        min-height: 280px;
+    }
+
     .product-title{
         font-size: 0.95em;
     }
@@ -134,6 +134,10 @@ span.offer-price{
 }
 
 @media only screen and (max-width: 380px) {
+    .product-item{
+        min-height: 240px;
+    }
+
     .product-title{
         font-size: 0.90em;
     }
@@ -147,6 +151,11 @@ span.offer-price{
     div.carousel-item img.d-block.w-100, img.product-image{
         height: 150px;
     }
+
+    .product-item{
+        min-height: 220px;
+    }
+
 
     .product-title{
         font-size: 0.8em;

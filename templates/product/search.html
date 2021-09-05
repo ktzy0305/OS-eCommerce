@@ -1,11 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Search '{{ category.name }}'{% endblock %}
+{% block title %}
+{% if query %}
+Search Results | '{{ query }}'
+{% endif %}
+{% if category %}
+Search Category | '{{ category.name }}'
+{% endif %}
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_display.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row mt-4">
         <div class="col-12">
+            {% if query %}
+            <h4>Products related to "{{ query }}"</h4>
+            {% endif %}
+            {% if category %}
             <h4>Products related to "{{ category.name }}"</h4>
+            {% endif %}
         </div>
     </div>
     <div class="row mt-3">
@@ -17,20 +33,27 @@
         </div>
         {% else %}
         {% for product in products %}
-        <div class="col-md-3">
-            <div class="card product-item h-100">
-                <div class="product-image">
-                    <img class="card-img-top" src="{{ product.image_url }}">
-                </div>
-                <div class="card-body">
-                    <div class="product-title">
-                        {{ product.title }}
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6 mb-4">
+            <a class="product-link" href="{{ url_for('product_info', product_id=product.id) }}">
+                <div class="card product-item h-100">
+                    <div class="image-container">
+                        {% if product.image_url %}
+                        <img class="card-img-top img-fluid product-image" src="{{ product.image_url }}">
+                        {% else %}
+                        <img class="card-img-top img-fluid product-image" src="{{ url_for('static', filename='images/no-image.jpg') }}">
+                        {% endif %}
+                        <!-- <span class="offer-indicator">On Offer</span> -->
                     </div>
-                    <div class="product-price">
-                        $ {{ '%0.2f'|format(product.price|float) }}
+                    <div class="card-body">
+                        <div class="product-title">
+                            {{ product.title }}
+                        </div>
+                        <div class="product-price">
+                            $ {{ '%0.2f'|format(product.price|float) }}
+                        </div>
                     </div>
                 </div>
-            </div> 
+            </a>
         </div>   
         {% endfor %}
         {% endif %}

@@ -14,23 +14,9 @@
                 <li class="nav-item {% if request.path == url_for('category') %}active{% endif %}">
                     <a class="nav-link" href="{{ url_for('category') }}"><i class="fas fa-layer-group"></i> Categories</a>
                 </li>
-                <!-- <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-layer-group"></i> Categories
-                    </a>
-                    <div class="dropdown-menu w-100" aria-labelledby="navbarDropdown">
-                        {% for category in categories %}
-                        <a class="dropdown-item" href="{{ url_for('category', category_name=category.name) }}">{{ category.name }}</a>
-                        {% if loop.index < loop.length %}
-                        <div class="dropdown-divider"></div>
-                        {% endif %}
-                        {% endfor %}
-                    </div>
-                </li> -->
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="form-inline my-2 my-lg-0" action="{{ url_for('product_search') }}" method="GET">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search Products" aria-label="Search" name="query" id="query">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i> Search</button>
             </form>
             <ul class="navbar-nav ml-auto">
@@ -43,7 +29,9 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{{ url_for('shopping_cart') }}"><i class="fa fa-shopping-cart"></i> Shopping Cart</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i> User Profile</a>
+                        <a class="dropdown-item" href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i> My Account</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ url_for('user_orders') }}"><i class="fas fa-clipboard-list"></i> My Orders</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
@@ -57,7 +45,7 @@
                 </li>
                 {% endif %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="{{ url_for('shopping_cart') }}"><i class="fa fa-shopping-cart"></i> 0 items</a>
+                    <a class="nav-link" href="{{ url_for('shopping_cart') }}"><i class="fa fa-shopping-cart"></i> {{ session["shopping_cart"] | length }} item(s)</a>
                 </li>
             </ul>
         </div>

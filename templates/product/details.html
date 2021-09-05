@@ -8,10 +8,22 @@
 {% endblock %} -->
 {% block content %}
 <div class="container">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+      {{ error_message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endif %}
     <div class="mt-5 info-card">
         <div class="row">
             <div class="col-md-5 col-sm-4">
+                {% if product.image_url %}
                 <img class="img-fluid" src="{{ product.image_url }}">
+                {% else %}
+                <img class="img-fluid" src="{{ url_for('static', filename='images/no-image.jpg') }}">
+                {% endif %}
             </div>
             <div class="col-md-7 col-sm-8">
                 <div class="product-title">
@@ -21,32 +33,35 @@
                     $ {{ '%0.2f'|format(product.price|float) }}
                 </div>
                 <div class="add-product mt-3">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Shipping</td>
-                                <td colspan="2">
-                                    Free Shipping
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Specification</td>
-                                <td colspan="2">
-                                    <button class="product-variation">XS</button>
-                                    <button class="product-variation">S</button>
-                                    <button class="product-variation">M</button>
-                                    <button class="product-variation">L</button>
-                                    <button class="product-variation">XL</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Quantity</td>
-                                <td><input class="form-control" type="number" name="quantity" style="width: 80px;" value="1" min="1" max="10" required=""></td>
-                                <td>{{ product.quantity }} piece(s) available</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <button type="submit" class="btn btn-primary mt-3">Add To Cart</button>
+                    <form method="POST" action="{{ url_for('add_to_cart') }}">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Shipping</td>
+                                    <td colspan="2">
+                                        Free Shipping
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Specification</td>
+                                    <td colspan="2">
+                                        <button class="product-variation">XS</button>
+                                        <button class="product-variation">S</button>
+                                        <button class="product-variation">M</button>
+                                        <button class="product-variation">L</button>
+                                        <button class="product-variation">XL</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Quantity</td>
+                                    <td><input class="form-control" type="number" name="quantity" style="width: 80px;" value="1" min="1" max="10" required=""></td>
+                                    <td>{{ product.quantity }} piece(s) available</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <button type="submit" class="btn btn-primary mt-3">Add To Cart</button>
+                    </form>
                 </div>
             </div>
         </div>

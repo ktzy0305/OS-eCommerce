@@ -1,17 +1,233 @@
 {% extends "base.html" %}
 {% block title %}Profile{% endblock %}
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+            <li class="breadcrumb-item active" aria-current="page">My Account</li>
         </ol>
     </nav>
-    <div class="col-sm-12">
+    <div class="row mt-3">
+        <div class="col-10 offset-1">
+            <div class="card">
+                <div class="card-header">My Account</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</a>
+                                <a class="nav-link" id="v-pills-addresses-tab" data-toggle="pill" href="#v-pills-addresses" role="tab" aria-controls="v-pills-addresses" aria-selected="false">Addresses</a>
+                                <a class="nav-link" id="v-pills-change-password-tab" data-toggle="pill" href="#v-pills-change-password" role="tab" aria-controls="v-pills-change-password" aria-selected="false">Change Password</a>
+                            </div>
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="tab-content" id="v-pills-tabContent">
+                                <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                                    <span class="h5">My Profile</span>
+                                    <hr>
+                                    <form action="">
+                                        <div class="form-group row">
+                                            <label for="name" class="col-sm-3 col-form-label">Name</label>
+                                            <div class="col-sm-9">
+                                              <input type="text" class="form-control" id="name" value="{{ user.name }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="email" class="col-sm-3 col-form-label">Email</label>
+                                            <div class="col-sm-9 input-group">
+                                              <input type="text" disabled class="form-control" id="email" value="{{ user.email }}">
+                                              <div class="input-group-append">
+                                                  <a class="btn btn-primary text-white" role="button">Change</a>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="gender" class="col-sm-3 col-form-label">Gender</label>
+                                            <div class="col-sm-9 input-group">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
+                                                    <label class="form-check-label" for="male">Male</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                                                    <label class="form-check-label" for="female">Female</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender" id="others" value="others">
+                                                    <label class="form-check-label" for="others">Others</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="date_of_birth" class="col-sm-3 col-form-label">Date Of Birth</label>
+                                            <div class="col-sm-9 input-group">
+                                                <div class="form-check form-check-inline">
+                                                    <select class="form-control" name="day" id="day">
+                                                        {% for n in range(1, 31) %}
+                                                        <option>{{ n }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <select class="form-control" name="month" id="month">
+                                                        <option>January</option>
+                                                        <option>February</option>
+                                                        <option>March</option>
+                                                        <option>April</option>
+                                                        <option>May</option>
+                                                        <option>June</option>
+                                                        <option>July</option>
+                                                        <option>August</option>
+                                                        <option>September</option>
+                                                        <option>October</option>
+                                                        <option>November</option>
+                                                        <option>December</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <select class="form-control" name="year" id="year">
+                                                        {% for n in range(1900, 2021) %}
+                                                        <option>{{ n }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-3"></div>
+                                            <div class="col-sm-9">
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-addresses" role="tabpanel" aria-labelledby="v-pills-addresses-tab">
+                                    <span class="h5">My Addresses</span>
+                                    <a class="btn btn-primary text-white float-right" data-toggle="modal" data-target="#address_form_modal">
+                                        <i class="fas fa-plus"></i> Add New Address
+                                    </a>
+                                    <hr>
+                                    <table class="table table-borderless w-100">
+                                    {% for address in user.address_list %}
+                                    <tr>
+                                        <td>
+                                            <address>
+                                                {{ address.street }}, {{address.unit}}
+                                                <br>
+                                                {{ address.postal_code }}
+                                                <br>
+                                                {{ address.city }}, {{ address.country }}
+                                            </address>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-secondary text-white" role="button" data-toggle="modal" data-target="#edit_address_form_modal{{loop.index}}">Edit</a>
+                                            <a class="btn btn-danger text-white" role="button" href="{{ url_for('remove_address', index = loop.index) }}">Remove</a>
+                                        </td>
+                                        <div class="modal fade" id="edit_address_form_modal{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="editAddressFormModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form method="POST" action="{{ url_for('edit_address', index = loop.index) }}">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editAddressFormModalCenterTitle">Edit Address</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="container">
+                                                            <div class="form-group row">
+                                                                <input name="postal_code" type="text" class="form-control" placeholder="Postal Code" value="{{ address.postal_code }}">
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <input name="street" type="text" class="form-control col-8" placeholder="Building, Street, and etc..." value="{{ address.street }}">
+                                                                <input name="unit" type="text" class="form-control col-3 offset-1" placeholder="Unit No." value="{{ address.unit }}">
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <input name="country" type="text" class="form-control" placeholder="Country" value="{{ address.country }}">
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <input name="city" type="text" class="form-control" placeholder="City" value="{{ address.city }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                    {% endfor %}
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-change-password" role="tabpanel" aria-labelledby="v-pills-change-password-tab">
+                                    <span class="h5">Change Password</span>
+                                    <hr>
+                                    <form action="">
+                                        <div class="form-group">
+                                            <label for="current_password">Current Password</label>
+                                            <input type="password" class="form-control" id="current_password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="new_password">New Password</label>
+                                            <input type="password" class="form-control" id="new_password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="new_password_2">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="new_password_2">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Confirm Change</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="address_form_modal" tabindex="-1" role="dialog" aria-labelledby="addressFormModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('add_address') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addressFormModalCenterTitle">New Address</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="form-group row">
+                            <input name="postal_code" type="text" class="form-control" placeholder="Postal Code">
+                        </div>
+                        <div class="form-group row">
+                            <input name="street" type="text" class="form-control col-8" placeholder="Building, Street, and etc...">
+                            <input name="unit" type="text" class="form-control col-3 offset-1" placeholder="Unit No.">
+                        </div>
+                        <div class="form-group row">
+                            <input name="country" type="text" class="form-control" placeholder="Country">
+                        </div>
+                        <div class="form-group row">
+                            <input name="city" type="text" class="form-control" placeholder="City">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+        </div>
     </div>
 </div>
 {% endblock %}

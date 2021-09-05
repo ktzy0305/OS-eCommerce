@@ -1,3 +1,4 @@
+from os import name
 from base import *
 from classes import *
 import re
@@ -8,6 +9,10 @@ Contains the routes that define each webpage in the web application.
 """
 @app.route('/')
 def index():
+    if session.get("user"):
+        user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+        session["shopping_cart"] = user.shopping_cart
+
     return render_template("home.html",
                             featured_products=[1,2,3,4,5],
                             new_products=[1,2,3,4,5], 
@@ -45,6 +50,8 @@ def login():
 def logout():
     if session.get("user") is not None:
         session.pop("user", None)
+        session.pop("shopping_cart", None)
+        session.pop("total_price", None)
     return redirect(url_for("index"))
         
 @app.route('/register', methods=['GET', 'POST'])
@@ -96,28 +103,271 @@ def category():
 
 @app.route('/products/search')
 def product_search():
+    query = request.args.get('query')
     category_name = request.args.get('category_name') 
-    category = Category.objects(name=category_name).first()
-    products = Product.objects(category=category)
-    return render_template('product/search.html', products=products, category=category)
+    if query:
+        products = Product.objects.filter(title__icontains=query)
+        return render_template('product/search.html', products=products, query=query)
+    else:
+        category = Category.objects(name=category_name).first()
+        products = Product.objects(category=category)
+        return render_template('product/search.html', products=products, category=category)
 
 @app.route('/products/<string:product_id>')
 def product_info(product_id):
     product = Product.objects(id=product_id).first()
-    return render_template("product/details.html", product=product)
+    if 'error_message' in  request.args:
+        error_message = request.args['error_message']
+        return render_template("product/details.html", product=product, error_message=error_message)
+    else:
+        return render_template("product/details.html", product=product)
 
-@app.route('/shoppingcart')
+@app.route('/cart')
 def shopping_cart():
     if session.get("user") is None:
         return redirect(url_for("index"))
     else:
+        user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+        session["shopping_cart"] = user.shopping_cart
+        session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
         return render_template("shoppingcart.html")
 
-@app.route('/userprofile')
+@app.route('/cart/add', methods=['POST'])
+def add_to_cart():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+    
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Product information to be added into cart
+    product_id = request.form["product_id"]
+    quantity = request.form["quantity"]
+    product_to_add = Product.objects(id=product_id).first()
+
+    # Check if product has enough stock left
+    if product_to_add.quantity < int(quantity):
+        print("Issue")
+        error_message = "Sorry, there is insufficient quantity available for this product."
+        return redirect(url_for("product_info", product_id=product_id, error_message = error_message))
+
+    # Check if the product to add already exist in cart, if exists add to current quantity.
+    for item in user.shopping_cart:
+        if item["product"].id == product_to_add.id:
+            current_quantity = item["quantity"]
+            new_quantity = current_quantity + int(quantity)
+            item["quantity"] = new_quantity
+            item["total_amount"] = item["price"] * new_quantity
+            user.save()
+            break
+
+    else:
+        product_to_add = CartProduct(
+                product=product_to_add, 
+                title=product_to_add["title"], 
+                price=product_to_add["price"],
+                quantity=int(quantity),
+                total_amount = product_to_add["price"] * int(quantity)
+        )
+        user.shopping_cart.append(product_to_add)
+        user.save()
+    
+    session["shopping_cart"] = user.shopping_cart
+    session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
+    return redirect(url_for("shopping_cart"))
+
+@app.route('/cart/update', methods=["POST"])
+def update_cart():
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Information to be updated
+    product_id = request.form["product_id"]
+    product_to_modify = Product.objects(id=product_id).first()
+    new_product_quantity = request.form["product_quantity"]
+
+    # Update the quantity of the product in cart
+    for item in user.shopping_cart:
+        if item["product"].id == product_to_modify.id:
+            item["quantity"] = int(new_product_quantity)
+            item["total_amount"] = item["price"] * int(new_product_quantity)
+            user.save()
+            break
+
+    session["shopping_cart"] = user.shopping_cart
+    session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
+    user.save()
+
+    return redirect(url_for("shopping_cart"))
+
+
+@app.route('/cart/remove/<string:product_id>')
+def remove_from_cart(product_id):
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Product
+    product_to_remove = Product.objects(id=product_id).first()
+
+    # Find item to remove
+    for item in user.shopping_cart:
+        if item["product"].id == product_to_remove.id:
+            user.shopping_cart.remove(item)
+            user.save()
+            break
+    
+    session["shopping_cart"] = user.shopping_cart
+    session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
+
+    return redirect(url_for("shopping_cart"))
+
+@app.route('/checkout')
+def checkout():
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+    checkout_items = user.shopping_cart
+
+    return render_template('checkout.html', checkout_items=checkout_items, user=user)
+
+@app.route('/order/processing')
+def place_order():
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Create Order Object
+    order = Order(
+        created_by = user,
+        date_created = datetime.now(),
+        ordered_products = user.shopping_cart,
+        total_amount = session.get('total_price'),
+        delivery_address = user.address_list[0]
+    )
+
+    # Save Order Object
+    order.save()
+
+    # Clear user shopping cart
+    del user.shopping_cart
+
+    # Save User State
+    user.save()
+
+    # Reset Total Price
+    session['total_price'] = 0
+
+    # Pass Order object to order complete page
+    return redirect(url_for('order_complete', order_id = order.id))
+
+@app.route('/order/complete')
+def order_complete():
+    order_id = request.args['order_id']
+    order = Order.objects(id=order_id).first()
+    print(order)
+    return render_template('ordercomplete.html', order=order)
+
+@app.route('/user/profile')
 def user_profile():
-    return render_template("profile.html")
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+    return render_template("profile.html", user=user)
+
+@app.route('/user/address/add', methods=["POST"])
+def add_address():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+    
+    # Address information
+    street = request.form["street"]
+    unit = request.form["unit"]
+    postal_code = request.form["postal_code"]
+    country = request.form["country"]
+    city = request.form["city"]
+
+    # Create address object
+    new_address = Address(
+        country = country,
+        city = city,
+        street = street,
+        unit = unit,
+        postal_code = postal_code
+    )
+    # Add to user's address list
+    user.address_list.append(new_address)
+    user.save()
+
+    return redirect(url_for("user_profile"))
+
+@app.route('/user/address/edit/<string:index>', methods=["POST"])
+def edit_address(index):
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Index
+    index_to_edit= int(index) - 1
+
+    # Address information
+    street = request.form["street"]
+    unit = request.form["unit"]
+    postal_code = request.form["postal_code"]
+    country = request.form["country"]
+    city = request.form["city"]
+
+    # Create updated address object
+    updated_address = Address(
+        country = country,
+        city = city,
+        street = street,
+        unit = unit,
+        postal_code = postal_code
+    )
+
+    # Update the address
+    user.address_list[index_to_edit] = updated_address
+
+    # Save Changes
+    user.save()
+
+    return redirect(url_for("user_profile"))
+
+@app.route('/user/address/remove/<string:index>')
+def remove_address(index):
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Index
+    index_to_remove = int(index) - 1
+
+    # Removal
+    del user.address_list[index_to_remove]
+
+    # Save Changes
+    user.save()
+
+    return redirect(url_for("user_profile"))
 
 
+@app.route('/user/orders')
+def user_orders():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Orders made by user
+    user_orders = Order.objects(created_by = user)
+
+    return render_template("orders.html", orders = user_orders)
 
 
 """
@@ -125,7 +375,7 @@ def user_profile():
 Contains the endpoints for mobile applications to perform user functionality
 of this web application.
 """
-@app.route(API_BASE_URL+'/login')
+@app.route(API_BASE_URL+'/login', methods=['POST'])
 def api_login():
     email = request.args.get("email")
     password = request.args.get("password")
@@ -167,6 +417,17 @@ def api_delete_user(user_id):
     user = User.objects.get(id=user_id)
     user.delete()
     return 'Delete Successful!'.format(), 200
+
+@app.route(API_BASE_URL+'/products', methods=['GET'])
+def api_products():
+    products = Product.objects
+    return jsonify(products), 200
+
+@app.route(API_BASE_URL+'/shoppingcart/<string:user_id>', methods=['GET'])
+def api_get_shopping_cart(user_id):
+    data = request.get_json()
+    user = User.objects.get(id=user_id)
+    return jsonify(user.shopping_cart)
 
 if __name__ == "__main__":
     app.run()
