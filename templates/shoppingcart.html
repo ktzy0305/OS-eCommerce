@@ -40,11 +40,11 @@
                                     <td>
                                         <form method="POST" action="{{ url_for('update_cart') }}">
                                             <input name="product_quantity" class="form-control" style="width: 80px;" type="number" value="{{ item['quantity'] }}" min="1" max="10" onchange="this.form.submit()">
-                                            <input name="product_id" type="hidden" value="{{ item['product'].id }}" />
+                                            <input name="product_id" type="hidden" value="{{ item['product'].id or item['product']['$oid'] }}" />
                                         </form>
                                     </td>
                                     <td>$ {{ '%0.2f'|format(item['total_amount']|float) }}</td>
-                                    <td><a class="btn btn-danger text-white" role="button" href="{{ url_for('remove_from_cart', product_id=item['product'].id) }}">Remove</a></td>
+                                    <td><a class="btn btn-danger text-white" role="button" href="{{ url_for('remove_from_cart', product_id= item['product'].id or item['product']['$oid'] ) }}">Remove</a></td>
                                 </tr>
                                 {% endfor %}
                             {% else %}
