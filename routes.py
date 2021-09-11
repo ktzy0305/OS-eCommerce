@@ -132,6 +132,14 @@ def shopping_cart():
         session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
         return render_template("shoppingcart.html")
 
+    # # If user is logged in, get their shopping cart stored in DB.
+    # if session.get("user"):
+    #     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+    #     session["shopping_cart"] = user.shopping_cart
+    #     session["total_price"] = sum([item["total_amount"] for item in user.shopping_cart]) if len(user.shopping_cart) > 0 else 0
+
+    # return render_template("shoppingcart.html")
+
 @app.route('/cart/add', methods=['POST'])
 def add_to_cart():
     # Check if user is logged in
@@ -179,6 +187,10 @@ def add_to_cart():
 
 @app.route('/cart/update', methods=["POST"])
 def update_cart():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
 
@@ -204,6 +216,10 @@ def update_cart():
 
 @app.route('/cart/remove/<string:product_id>')
 def remove_from_cart(product_id):
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+    
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
 
@@ -224,6 +240,10 @@ def remove_from_cart(product_id):
 
 @app.route('/checkout')
 def checkout():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
     checkout_items = user.shopping_cart
@@ -232,6 +252,10 @@ def checkout():
 
 @app.route('/order/processing')
 def place_order():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
 
@@ -261,6 +285,10 @@ def place_order():
 
 @app.route('/order/complete')
 def order_complete():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
     order_id = request.args['order_id']
     order = Order.objects(id=order_id).first()
     print(order)
