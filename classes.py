@@ -16,6 +16,7 @@ class Product(db.Document):
 class CartProduct(db.EmbeddedDocument):
     product = db.ReferenceField(Product)
     title = db.StringField(required=True, max_length=200)
+    image_url = db.StringField(max_length=1000)
     price = db.FloatField(required=True)
     quantity = db.IntField(required=True)
     total_amount = db.FloatField(required=True)

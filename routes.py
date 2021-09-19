@@ -139,6 +139,8 @@ def shopping_cart():
     
     session["total_price"] = sum([item["total_amount"] for item in session["shopping_cart"]]) if len(session["shopping_cart"]) > 0 else 0
 
+    print(session["shopping_cart"])
+
     return render_template("shoppingcart.html")
 
 @app.route('/cart/add', methods=['POST'])
@@ -176,6 +178,7 @@ def add_to_cart():
                     product=product_to_add, 
                     title=product_to_add["title"], 
                     price=product_to_add["price"],
+                    image_url = product_to_add["image_url"],
                     quantity=int(quantity),
                     total_amount = product_to_add["price"] * int(quantity)
             )
@@ -203,6 +206,7 @@ def add_to_cart():
                     product=product_to_add, 
                     title=product_to_add["title"], 
                     price=product_to_add["price"],
+                    image_url = product_to_add["image_url"],
                     quantity=int(quantity),
                     total_amount = product_to_add["price"] * int(quantity)
             )
