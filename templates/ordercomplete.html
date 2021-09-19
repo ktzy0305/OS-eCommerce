@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Order Completed{% endblock %}
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/order_complete.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -23,6 +23,7 @@
                     <table class="table table-sm table-hover">
                         <thead>
                             <tr>
+                                <th class="text-uppercase table-col-header" colspan="1"></th>
                                 <th class="text-uppercase table-col-header">Products Ordered</th>
                                 <th class="text-uppercase table-col-header">Unit Price</th>
                                 <th class="text-uppercase table-col-header">Quantity</th>
@@ -32,6 +33,7 @@
                         <tbody>
                         {% for item in order.ordered_products %}
                             <tr>
+                                <td><img class="img img-fluid order-product-img" src="{{ item['product']['image_url'] }}"></td>
                                 <td>{{ item['title'] }}</td>
                                 <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
                                 <td>{{ item['quantity'] }}</td>

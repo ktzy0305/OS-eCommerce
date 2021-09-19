@@ -1,3 +1,8 @@
 .card{
     background-color: rgba(0,0,0,.03);
 }
+
+.cart-product-img{
+    width: 120px;
+    height: 120px;
+}
