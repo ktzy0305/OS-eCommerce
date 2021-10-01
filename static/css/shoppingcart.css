@@ -6,3 +6,29 @@
     width: 120px;
     height: 120px;
 }
+
+.product-link:hover{
+    text-decoration: none;
+}
+
+
+@media only screen and (max-width: 512px)  {
+
+    h3.card-title{
+        font-size: 1.2em;
+    }
+
+    tr > th, tr > td, input[name="product_quantity"]{
+        font-size: 0.95em;
+    }
+
+}
+
+@media only screen and (max-width: 440px)  {
+
+    .cart-product-img{
+        width: 100px;
+        height: 100px;
+    }
+
+}

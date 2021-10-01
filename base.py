@@ -20,7 +20,7 @@ app = Flask(__name__)
 if "SECRET_KEY" in os.environ:
     app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 else:
-    AppCredentialsFile = open(os.path.join(BASE_DIR, "AppCredentials.json"))
+    AppCredentialsFile = open(os.path.join(BASE_DIR, "credentials", "AppCredentials.json"))
     AppCredentials = json.load(AppCredentialsFile)
     app.config["SECRET_KEY"] = AppCredentials["secret_key"]
 
@@ -32,7 +32,7 @@ if ("MONGODB_USERNAME" in os.environ) and ("MONGODB_PASSWORD" in os.environ) and
     # Hosted Mongo Client
     DB_URI = "mongodb+srv://{0}:{1}@{2}".format(os.environ["MONGODB_USERNAME"], os.environ["MONGODB_PASSWORD"], os.environ["MONGODB_CLUSTER_URL"])
 else:
-    MongoDBCredentialsFile = open(os.path.join(BASE_DIR, "MongoDBCredentials.json"))
+    MongoDBCredentialsFile = open(os.path.join(BASE_DIR, "credentials", "MongoDBCredentials.json"))
     MongoDBCredentials = json.load(MongoDBCredentialsFile)
     # Hosted Mongo Client
     DB_URI = "mongodb+srv://{0}:{1}@{2}".format(MongoDBCredentials["username"], MongoDBCredentials["password"], MongoDBCredentials["clusterURL"])

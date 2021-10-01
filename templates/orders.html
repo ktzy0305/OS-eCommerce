@@ -21,7 +21,7 @@
                     <div>Order Date: {{ order.date_created.strftime('%d/%m/%Y %H:%M') }}</div>
                 </div>
                 <div class="card-body">
-                    <table class="table table-sm table-hover">
+                    <table class="table table-sm table-hover table-responsive-md">
                         <thead>
                             <tr>
                                 <th class="text-uppercase table-col-header" colspan="1"></th>
@@ -34,7 +34,7 @@
                         <tbody>
                         {% for item in order.ordered_products %}
                             <tr>
-                                <td><img class="img img-fluid order-product-img" src="{{ item['product']['image_url'] }}"></td>
+                                <td><img class="img order-product-img" src="{{ item['product']['image_url'] }}"></td>
                                 <td>{{ item['title'] }}</td>
                                 <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
                                 <td>{{ item['quantity'] }}</td>
@@ -43,6 +43,8 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                <div class="card-footer">
                     <div style="text-align: right;">Order Total: ${{ '%0.2f'|format(order.total_amount) }}</div>
                     <div style="text-align: right;">Amount Paid: ${{ '%0.2f'|format(order.total_amount) }}</div>
                 </div>

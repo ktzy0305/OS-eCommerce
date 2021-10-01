@@ -152,7 +152,6 @@ def add_to_cart():
 
     # Check if product has enough stock left
     if product_to_add.quantity < int(quantity):
-        print("Issue")
         error_message = "Sorry, there is insufficient quantity available for this product."
         return redirect(url_for("product_info", product_id=product_id, error_message = error_message))
     

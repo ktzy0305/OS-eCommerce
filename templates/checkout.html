@@ -23,7 +23,7 @@
                     <!-- Delivery Address -->
                     <h5>Delivery Address</h3>
                     {% if user.address_list|length > 0 %}
-                    <table class="table table-borderless">
+                    <table class="table table-responsive-md table-borderless">
                         <tr>
                             <td>
                                 <address>
@@ -46,7 +46,7 @@
                     <div class="alert alert-danger">Please add a delivery address!</div>
                     {% endif %}
                     <!-- Order Summary -->
-                    <table class="table table-sm table-hover">
+                    <table class="table table-sm table-hover table-responsive-md">
                         <thead>
                             <tr>
                                 <th class="text-uppercase table-col-header" colspan="1"></th>
@@ -59,7 +59,7 @@
                         <tbody>
                         {% for item in checkout_items %}
                             <tr>
-                                <td><img class="img img-fluid checkout-product-img" src="{{ item['product']['image_url'] }}"></td>
+                                <td><img class="img checkout-product-img" src="{{ item['product']['image_url'] }}"></td>
                                 <td>{{ item['title'] }}</td>
                                 <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
                                 <td>{{ item['quantity'] }}</td>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="card-footer">
                     <!-- Payment Method -->
-                    <a class="btn btn-success float-right text-white" href="{{ url_for('place_order') }}">Place Order</a>
+                    <a class="btn btn-success float-right text-white {{ 'disabled' if user.address_list|length == 0  }}" href="{{ url_for('place_order') }}">Place Order</a>
                 </div>
             </div>
         </div>

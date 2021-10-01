@@ -1,4 +1,33 @@
+.card{
+    background-color: rgba(0,0,0,.03);
+}
+
 .order-product-img{
     width: 120px;
     height: 120px;
+}
+
+@media only screen and (max-width: 512px)  {
+
+    h4.card-title{
+        font-size: 1.2em;
+    }
+
+    tr > th, tr > td{
+        font-size: 0.95em;
+    }
+
+}
+
+@media only screen and (max-width: 440px)  {
+
+    h4.card-title{
+        font-size: 1.175em;
+    }
+
+    .order-product-img{
+        width: 100px;
+        height: 100px;
+    }
+
 }
