@@ -3,6 +3,9 @@
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/shoppingcart.css') }}">
 {% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/shoppingcart.js') }}"></script>
+{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -19,7 +22,79 @@
                     <h3 class="card-title">My Cart</h3>
                 </div>
                 <div class="card-body">
-                    <table class="table table-sm table-hover table-responsive-md">
+                    {% if session.get("shopping_cart") %}
+                    <!-- Use rows and column flexbox as a table -->
+                    <div class="list-group mb-3 mobile-disappear">
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-xl-2 col-lg-2 col-md-3 col-4 text-uppercase font-weight-bold">Product</div>
+                                <div class="col-xl-10 col-lg-10 col-md-9 col-8">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-4 text-uppercase font-weight-bold"></div>
+                                        <div class="col-xl-2 col-lg-2 text-uppercase font-weight-bold">Unit Price</div>
+                                        <div class="col-xl-2 col-lg-3 text-uppercase font-weight-bold">Quantity</div>
+                                        <div class="col-xl-2 col-lg-2 text-uppercase font-weight-bold">Total Price</div>
+                                        <div class="col-xl-2 col-lg-1 text-uppercase font-weight-bold breakpoint-hidden">Actions</div>
+                                    </div>
+                                </div>
+                                <hr/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group">
+                        {% for item in session.get("shopping_cart") %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="row">
+                                <div class="col-xl-2 col-lg-2 col-md-3 col-4">
+                                    <div>
+                                        <img class="img cart-product-img" src="{{ item['image_url'] or item['product']['image_url'] }}">
+                                    </div>
+                                </div>
+                                <div class="col-xl-10 col-lg-10 col-md-9 col-8">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-4">
+                                            <a class="product-link" href="{{ url_for('product_info', product_id= item['product'].id or item['product']['$oid']) }}">{{ item['title'] }}</a>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2">
+                                            $ {{ '%0.2f'|format(item['price']|float) }}
+                                        </div>
+                                        <div class="col-xl-2 col-lg-3 mb-2">
+                                            <form method="POST" action="{{ url_for('update_cart') }}">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <button class="btn btn-outline-secondary" type="button" onclick="decrementValue({{loop.index}})"><i class="fas fa-minus"></i></button>
+                                                    </div>
+                                                    <input name="product_quantity" class="form-control text-center" type="text" value="{{ item['quantity'] }}" min="1" max="10" onchange="this.form.submit()">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button" onclick="incrementValue({{loop.index}})"><i class="fas fa-plus"></i></button>
+                                                    </div>
+                                                </div>
+                                                <input name="product_id" type="hidden" value="{{ item['product'].id or item['product']['$oid'] }}" />
+                                            </form>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2 mobile-disappear">
+                                            $ {{ '%0.2f'|format(item['total_amount']|float) }}
+                                        </div>
+                                        <div class="col-xl-2 col-lg-1">
+                                            <a class="btn btn-danger text-white" role="button" href="{{ url_for('remove_from_cart', product_id= item['product'].id or item['product']['$oid'] ) }}"><span class="breakpoint-hidden">Remove</span> <i class="fa fa-trash" aria-hidden="true"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="row mb-3">
+                        <div class="col-lg-4 offset-lg-4 text-center">
+                            <p>Your shopping cart is empty</p>
+                            <a class="btn btn-primary" href="{{ url_for('index') }}">Go Shopping Now</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Table element -->
+                    <!-- <table class="table table-sm table-hover table-responsive-md">
                         <thead>
                             <tr>
                                 <th class="text-uppercase table-col-header cart-product-img-header" colspan="1"></th>
@@ -54,11 +129,18 @@
                             </tr>
                             {% endif %}
                         </tbody>
-                    </table>
-                    <p style="text-align: right;">Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p>
+                    </table> -->
+                    <!-- <p style="text-align: right;">Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p> -->
                 </div>
-                <div class="card-footer">
+                <div class="card-footer d-flex justify-content-end">
+                    <div class="total-price mr-3">
+                        Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}
+                    </div>
                     <a class="btn btn-success float-right text-white" href="{{ url_for('checkout') }}">Check Out</a>
+                    <!-- <div class="justify-content-end">
+                        <span class="total-price mr-3">Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</span>
+                        <a class="btn btn-success float-right text-white" href="{{ url_for('checkout') }}">Check Out</a>
+                    </div> -->
                 </div>
             </div>
         </div>

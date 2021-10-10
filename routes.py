@@ -223,6 +223,9 @@ def update_cart():
     product_to_modify = Product.objects(id=product_id).first()
     new_product_quantity = request.form["product_quantity"]
 
+    if new_product_quantity == "":
+        return redirect(url_for("shopping_cart"))
+
     # Check if user is logged in
     if session.get("user") is None:
         shopping_cart = session["shopping_cart"]
