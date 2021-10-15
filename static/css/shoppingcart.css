@@ -38,7 +38,7 @@ i.fa-minus, i.fa-plus{
 @media only screen and (max-width: 992px){
     input[name=product_quantity]{
         flex: none !important;
-        width: 80px;
+        width: 80px !important;
     }
     
     .mobile-disappear{

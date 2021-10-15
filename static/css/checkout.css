@@ -7,19 +7,120 @@
     height: 120px;
 }
 
-@media only screen and (max-width: 512px)  {
+.total-price{
+    font-size: x-large;
+    font-weight: 600;
+}
 
-    tr > th, tr > td{
+.breakpoint-hidden{
+    display: none;
+}
+
+@media only screen and (max-width: 1200px){
+    i.fa-minus, i.fa-plus{
+        font-size: 1em;
+    }
+
+    .checkout-product-img{
+        width: 100px;
+        height: 100px;
+    }
+}
+
+@media only screen and (max-width: 992px){
+    input[name=product_quantity]{
+        flex: none !important;
+        width: 80px !important;
+    }
+    
+    .mobile-disappear{
+        display: none;
+    }
+
+    .breakpoint-hidden{
+        display: contents;
+    }
+}
+
+
+@media only screen and (max-width: 512px)  {
+    h3.card-title{
+        font-size: 1.2em;
+    }
+
+    div.list-group{
         font-size: 0.95em;
     }
 
 }
 
 @media only screen and (max-width: 440px)  {
-
-    .checkout-product-img{
-        width: 100px;
-        height: 100px;
+    input[name=product_quantity]{
+        flex: 1 1 0% !important;
+        min-width: 0;
     }
 
+    .checkout-product-img{
+        width: 90px;
+        height: 90px;
+    }
+
+}
+
+
+@media only screen and (max-width: 400px)  {
+
+    div.list-group{
+        font-size: 0.925em;
+    }
+
+    .checkout-product-img{
+        width: 80px;
+        height: 80px;
+    }
+
+    .total-price{
+        font-size: larger;
+        font-weight: 600;
+    }
+}
+
+@media only screen and (max-width: 360px)  {
+    div.list-group{
+        font-size: 0.9em;
+    }
+
+    .checkout-product-img{
+        width: 70px;
+        height: 70px;
+    }
+
+    /* .total-price{
+        font-size: large;
+        font-weight: 600;
+    } */
+}
+
+@media only screen and (max-width: 320px) {
+    .cart-product-img{
+        width: 60px;
+        height: 60px;
+    }
+
+    .total-price{
+        font-size: medium;
+        font-weight: 600;
+    }
+}
+
+
+@media only screen and (max-width: 300px) {
+    input[name=product_quantity]{
+        flex: none !important;
+        width: 50px;
+    }
+
+    .breakpoint-hidden{
+        display: none;
+    }
 }

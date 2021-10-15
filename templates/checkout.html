@@ -46,31 +46,56 @@
                     <div class="alert alert-danger">Please add a delivery address!</div>
                     {% endif %}
                     <!-- Order Summary -->
-                    <table class="table table-sm table-hover table-responsive-md">
-                        <thead>
-                            <tr>
-                                <th class="text-uppercase table-col-header" colspan="1"></th>
-                                <th class="text-uppercase table-col-header">Products Ordered</th>
-                                <th class="text-uppercase table-col-header">Unit Price</th>
-                                <th class="text-uppercase table-col-header">Quantity</th>
-                                <th class="text-uppercase table-col-header">Item Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="list-group mb-3 mobile-disappear">
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-xl-2 col-lg-3 col-md-3 col-4 text-uppercase font-weight-bold">Products Ordered</div>
+                                <div class="col-xl-10 col-lg-9 col-md-9 col-8">
+                                    <div class="row">
+                                        <div class="col-xl-5 col-lg-4 text-uppercase font-weight-bold"></div>
+                                        <div class="col-xl-2 col-lg-2 text-uppercase font-weight-bold">Unit Price</div>
+                                        <div class="col-xl-2 col-lg-3 text-uppercase font-weight-bold">Quantity</div>
+                                        <div class="col-xl-3 col-lg-2 text-uppercase font-weight-bold">Item Subtotal</div>
+                                    </div>
+                                </div>
+                                <hr/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group">
                         {% for item in checkout_items %}
-                            <tr>
-                                <td><img class="img checkout-product-img" src="{{ item['product']['image_url'] }}"></td>
-                                <td>{{ item['title'] }}</td>
-                                <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
-                                <td>{{ item['quantity'] }}</td>
-                                <td>$ {{ '%0.2f'|format(item['total_amount']|float) }}</td>
-                            </tr>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="row">
+                                <div class="col-xl-2 col-lg-3 col-md-3 col-4">
+                                    <div>
+                                        <img class="img checkout-product-img" src="{{ item['product']['image_url'] }}">
+                                    </div>
+                                </div>
+                                <div class="col-xl-10 col-lg-9 col-md-9 col-8">
+                                    <div class="row">
+                                        <div class="col-xl-5 col-lg-4">
+                                            {{ item['title'] }}
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2">
+                                            $ {{ '%0.2f'|format(item['price']|float) }}
+                                        </div>
+                                        <div class="col-xl-2 col-lg-3 mb-2">
+                                            <span class="breakpoint-hidden font-weight-bold">Quantity:</span> {{ item['quantity'] }}
+                                        </div>
+                                        <div class="col-xl-3 col-lg-2 mobile-disappear">
+                                            $ {{ '%0.2f'|format(item['total_amount']|float) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {% endfor %}
-                        </tbody>
-                    </table>
-                    <p style="text-align: right;">Order Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p>
+                    </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer d-flex justify-content-end">
+                    <div class="total-price mr-3">
+                        Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}
+                    </div>
                     <!-- Payment Method -->
                     <a class="btn btn-success float-right text-white {{ 'disabled' if user.address_list|length == 0  }}" href="{{ url_for('place_order') }}">Place Order</a>
                 </div>

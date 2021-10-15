@@ -64,7 +64,7 @@
                                                     <div class="input-group-prepend">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="decrementValue({{loop.index}})"><i class="fas fa-minus"></i></button>
                                                     </div>
-                                                    <input name="product_quantity" class="form-control text-center" type="text" value="{{ item['quantity'] }}" min="1" max="10" onchange="this.form.submit()">
+                                                    <input name="product_quantity" class="form-control text-center" type="text" value="{{ item['quantity'] }}" min="1" max="10" onchange="validateQuantity({{loop.index}})">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="incrementValue({{loop.index}})"><i class="fas fa-plus"></i></button>
                                                     </div>
@@ -92,55 +92,12 @@
                         </div>
                     </div>
                     {% endif %}
-
-                    <!-- Table element -->
-                    <!-- <table class="table table-sm table-hover table-responsive-md">
-                        <thead>
-                            <tr>
-                                <th class="text-uppercase table-col-header cart-product-img-header" colspan="1"></th>
-                                <th class="text-uppercase table-col-header">Product</th>
-                                <th class="text-uppercase table-col-header">Unit Price</th>
-                                <th class="text-uppercase table-col-header">Quantity</th>
-                                <th class="text-uppercase table-col-header">Total Price</th>
-                                <th class="text-uppercase table-col-header">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if session.get("shopping_cart") %}
-                                {% for item in session.get("shopping_cart") %}
-                                <tr>
-                                    <td><img class="img cart-product-img" src="{{ item['image_url'] or item['product']['image_url'] }}"></td>
-                                    <td><a class="product-link" href="{{ url_for('product_info', product_id= item['product'].id or item['product']['$oid']) }}">{{ item['title'] }}</a></td>
-                                    <td>$ {{ '%0.2f'|format(item['price']|float) }}</td>
-                                    <td>
-                                        <form method="POST" action="{{ url_for('update_cart') }}">
-                                            <input name="product_quantity" class="form-control" style="width: 80px;" type="number" value="{{ item['quantity'] }}" min="1" max="10" onchange="this.form.submit()">
-                                            <input name="product_id" type="hidden" value="{{ item['product'].id or item['product']['$oid'] }}" />
-                                        </form>
-                                    </td>
-                                    <td>$ {{ '%0.2f'|format(item['total_amount']|float) }}</td>
-                                    <td><a class="btn btn-danger text-white" role="button" href="{{ url_for('remove_from_cart', product_id= item['product'].id or item['product']['$oid'] ) }}">Remove</a></td>
-                                </tr>
-                                {% endfor %}
-                            {% else %}
-                            <tr>
-                                <td colspan="1"></td>
-                                <td colspan="4">Shopping Cart Is Empty</td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table> -->
-                    <!-- <p style="text-align: right;">Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</p> -->
                 </div>
                 <div class="card-footer d-flex justify-content-end">
                     <div class="total-price mr-3">
                         Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}
                     </div>
                     <a class="btn btn-success float-right text-white" href="{{ url_for('checkout') }}">Check Out</a>
-                    <!-- <div class="justify-content-end">
-                        <span class="total-price mr-3">Total: ${{ '%0.2f'|format(session.get("total_price")|float) }}</span>
-                        <a class="btn btn-success float-right text-white" href="{{ url_for('checkout') }}">Check Out</a>
-                    </div> -->
                 </div>
             </div>
         </div>
