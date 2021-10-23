@@ -8,7 +8,60 @@ $(document).ready(function(){
     if(activeTab){
         $('#v-pills-tab a[href="' + activeTab + '"]').tab('show');
     }
+
+    SetDateLimit();
 });
+
+function SetDateLimit(){
+    var dtToday = new Date();
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+
+    var maxDate = year + '-' + month + '-' + day;    
+    $('#date_of_birth').attr('max', maxDate);
+}
+
+
+function CheckProfileName(){
+    let profile_name = document.getElementById("profile_name");
+    let profile_name_error = document.getElementById("profile_name_error");
+    if (profile_name.value === ""){
+        profile_name.classList.add("is-invalid");
+        profile_name_error.innerHTML = "Name cannot be empty!";
+        return false;
+    }
+    else{
+        profile_name.classList.remove("is-invalid");
+        profile_name_error.innerHTML = "";
+        return true;
+    }
+}
+
+function CheckDateOfBirth(){
+    let date_of_birth = document.getElementById("date_of_birth");
+    let date_of_birth_error = document.getElementById("date_of_birth_error");
+    if (date_of_birth.value === ""){
+        date_of_birth.classList.add("is-invalid");
+        date_of_birth_error.innerHTML = "Please specify your date of birth!"
+        return false;
+    }
+    else{
+        date_of_birth.classList.remove("is-invalid");
+        date_of_birth_error.innerHTML = "";
+        return true;
+    }
+}
+
+function UpdateProfileFormValidity(){
+    return CheckProfileName() && CheckDateOfBirth();
+}
 
 function CheckCurrentPassword(){
     let current_password = document.getElementById("current_password");

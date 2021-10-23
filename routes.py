@@ -1,3 +1,4 @@
+from logging import error
 from os import name
 
 from mongoengine import errors
@@ -364,6 +365,37 @@ def user_profile():
         return render_template("profile.html", user=user, pw_change_errors=pw_change_errors)
     else:
         return render_template("profile.html", user=user)
+
+@app.route('/user/profile/update', methods=['POST'])
+def update_user_profile():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Request Form
+    name = request.form.get("profile_name")
+    gender = request.form.get("gender")
+    date_of_birth = request.form.get("date_of_birth")
+
+    # Errors
+    errors = {}
+
+    # Checks
+    if name == "":
+        errors["name_error"] = "Name cannot be empty!"
+    if date_of_birth == "":
+        errors["date_of_birth_error"] = "Please specify your date of birth!"    
+
+    if len(errors) == 0:
+        user.name = name
+        user.gender = gender
+        user.date_of_birth = datetime.strptime(date_of_birth, "%Y-%m-%d").date()
+        user.save()
+
+    return redirect(url_for('user_profile'))
 
 @app.route('/user/address/add', methods=["POST"])
 def add_address():

@@ -1,3 +1,4 @@
+from bson.json_util import default
 from base import db
 from datetime import datetime
 
@@ -32,10 +33,12 @@ class User(db.Document):
     email = db.EmailField(required=True, max_length=100)
     password = db.StringField(required=True, max_length=128)
     name = db.StringField(required=True, max_length=50)
-    role = db.StringField(default="USER", required=True, max_length=50)
-    registered_on = db.DateTimeField(default=datetime.now())
+    gender = db.StringField(default="not specified")
+    date_of_birth = db.DateTimeField()
     shopping_cart = db.ListField(db.EmbeddedDocumentField(CartProduct))
     address_list = db.ListField(db.EmbeddedDocumentField(Address))
+    role = db.StringField(default="USER", required=True, max_length=50)
+    registered_on = db.DateTimeField(default=datetime.now())
 
 class Order(db.Document):
     created_by = db.ReferenceField(User)
