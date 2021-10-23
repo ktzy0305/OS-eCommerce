@@ -20,6 +20,15 @@ i.fa-minus, i.fa-plus{
     font-weight: 600;
 }
 
+.breakpoint-hidden{
+    display: none;
+}
+
+input[name=product_quantity]{
+    flex: none !important;
+    width: 80px;
+}
+
 @media only screen and (max-width: 1200px){
     i.fa-minus, i.fa-plus{
         font-size: 1em;
@@ -30,9 +39,6 @@ i.fa-minus, i.fa-plus{
         height: 100px;
     }
 
-    .breakpoint-hidden{
-        display: none;
-    }
 }
 
 @media only screen and (max-width: 992px){

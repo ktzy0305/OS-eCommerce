@@ -1,4 +1,6 @@
 from os import name
+
+from mongoengine import errors
 from base import *
 from classes import *
 import re
@@ -138,8 +140,6 @@ def shopping_cart():
         session["shopping_cart"] = user.shopping_cart
     
     session["total_price"] = sum([item["total_amount"] for item in session["shopping_cart"]]) if len(session["shopping_cart"]) > 0 else 0
-
-    print(session["shopping_cart"])
 
     return render_template("shoppingcart.html")
 
@@ -353,7 +353,17 @@ def user_profile():
 
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
-    return render_template("profile.html", user=user)
+
+    if "pw_change_msg" in request.args:
+        pw_change_msg = request.args["pw_change_msg"]
+        return render_template("profile.html", user=user, pw_change_msg=pw_change_msg)
+    elif "pw_change_errors" in request.args:
+        pw_change_errors  = request.args["pw_change_errors"]
+        pw_change_errors = pw_change_errors.replace("'", "\"")
+        pw_change_errors = json.loads(pw_change_errors)
+        return render_template("profile.html", user=user, pw_change_errors=pw_change_errors)
+    else:
+        return render_template("profile.html", user=user)
 
 @app.route('/user/address/add', methods=["POST"])
 def add_address():
@@ -432,6 +442,52 @@ def remove_address(index):
     user.save()
 
     return redirect(url_for("user_profile"))
+
+@app.route('/user/account/changepassword', methods=["POST"])
+def change_password():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Form Information
+    current_password = request.form.get("current_password")
+    new_password = request.form.get("new_password")
+    new_password_2 = request.form.get("new_password_2")
+
+    # Check empty
+    check_empty = lambda data : True if data == "" else False
+
+    # Check password type same
+    check_same = (new_password == new_password_2)
+
+    # Errors
+    errors = {}
+
+    if check_empty(current_password):
+        errors["current_password_error"] = "Password cannot be empty!"
+    if check_empty(new_password):
+        errors["new_password_error"] = "New password cannot be empty!"
+    if check_empty(new_password):
+        errors["new_password_2_error"] = "Field cannot be empty!"
+
+    if not bcrypt.checkpw(current_password.encode('utf-8'), user.password.encode('utf-8')):
+        errors["current_password_error"] = "Incorrect Password!"
+    if not check_same:
+        errors["new_password_2_error"] = "Passwords are not the same."
+
+    if len(errors) == 0:
+        new_password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+        user.password = new_password_hash.decode("utf-8") 
+        user.save()
+
+        return redirect(url_for("user_profile", pw_change_msg="Your password has been successfully changed!"))
+    else:
+        return redirect(url_for("user_profile", pw_change_errors=errors))
+
+
 
 
 @app.route('/user/orders')
