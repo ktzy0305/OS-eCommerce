@@ -64,13 +64,14 @@
                                                     <div class="input-group-prepend">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="decrementValue({{loop.index}})"><i class="fas fa-minus"></i></button>
                                                     </div>
-                                                    <input name="product_quantity" class="form-control text-center" type="text" value="{{ item['quantity'] }}" min="1" max="10" onchange="validateQuantity({{loop.index}})">
+                                                    <input name="product_quantity" class="form-control text-center" type="text" value="{{ item['quantity'] }}" min="1" max="{{ items_quantity_remaining[loop.index-1] if items_quantity_remaining[loop.index-1] < 10 else 10  }}" onchange="validateQuantity({{loop.index}})">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="incrementValue({{loop.index}})"><i class="fas fa-plus"></i></button>
                                                     </div>
                                                 </div>
                                                 <input name="product_id" type="hidden" value="{{ item['product'].id or item['product']['$oid'] }}" />
                                             </form>
+                                            <small class="text-danger">{{ items_quantity_remaining[loop.index-1] }} items left</small>
                                         </div>
                                         <div class="col-xl-2 col-lg-2 mobile-disappear">
                                             $ {{ '%0.2f'|format(item['total_amount']|float) }}

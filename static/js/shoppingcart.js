@@ -15,7 +15,7 @@ function incrementValue(index){
     let value_input = document.getElementsByName("product_quantity")[index-1];
     var value = parseInt(value_input.value, 10);
     value = isNaN(value) ? 0 : value;
-    if(value < 10){
+    if(value < value_input.max){
         value++;
         value_input.value = value;
         form.submit();
@@ -27,7 +27,7 @@ function validateQuantity(index){
     let value_input = document.getElementsByName("product_quantity")[index-1];
     var value = parseInt(value_input.value, 10);
     value = isNaN(value) ? 0 : value;
-    if(value > 0 && value <= 10){
+    if(value > 0 && value <= value_input.max){
         console.log("Valid");
         value_input.classList.remove("is-invalid");
         value_input.value = value;

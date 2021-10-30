@@ -142,7 +142,17 @@ def shopping_cart():
     
     session["total_price"] = sum([item["total_amount"] for item in session["shopping_cart"]]) if len(session["shopping_cart"]) > 0 else 0
 
-    return render_template("shoppingcart.html")
+
+    # Get remaining stock of products
+    items_quantity_remaining = []
+    for item in session["shopping_cart"]:
+        if session.get("user"):
+            items_quantity_remaining.append(item["product"]["quantity"])
+        else:
+            product = Product.objects(id=item["product"]["$oid"]).first()
+            items_quantity_remaining.append(product["quantity"])
+
+    return render_template("shoppingcart.html", items_quantity_remaining = items_quantity_remaining)
 
 @app.route('/cart/add', methods=['POST'])
 def add_to_cart():
@@ -521,7 +531,6 @@ def change_password():
 
 
 
-
 @app.route('/user/orders')
 def user_orders():
     # Check if user is logged in
@@ -536,6 +545,10 @@ def user_orders():
 
     return render_template("orders.html", orders = user_orders)
 
+
+@app.route('/resetpassword')
+def reset_password():
+    return render_template("reset_password.html")
 
 """
 > REST API Routes

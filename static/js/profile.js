@@ -87,9 +87,16 @@ function CheckNewPassword(){
         return false;
     }
     else{
-        new_password.classList.remove("is-invalid");
-        new_password_error.innerHTML = "";
-        return true;
+        if(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[A-z0-9?!@#$%^&*()]{8,}/.test(new_password.value)){
+            new_password.classList.remove("is-invalid");
+            new_password_error.innerHTML = "";
+            return true;
+        }
+        else{
+            new_password.classList.add("is-invalid");
+            new_password_error.innerHTML = "Password must contain a minimum of eight characters, with at least one uppercase letter, one lowercase letter and one number. These are the allowable symbols: ?!@#$%^&*()";
+            return false;
+        }
     }
 }
 
@@ -138,5 +145,5 @@ function CheckNewPasswordSimilar(){
 }
 
 function ChangePasswordFormValidity(){
-    return CheckNewPasswordSimilar();
+    return CheckNewPasswordSimilar() && CheckNewPassword() && CheckNewPassword2();
 }
