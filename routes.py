@@ -333,6 +333,12 @@ def place_order():
     # Save Order Object
     order.save()
 
+    # Reduce stock of products
+    for item in user.shopping_cart:
+        product = Product.objects(id=item["product"].id).first()
+        product.quantity = product.quantity - item["quantity"]
+        product.save()
+
     # Clear user shopping cart
     del user.shopping_cart
 
