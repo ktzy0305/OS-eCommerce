@@ -16,9 +16,11 @@ def index():
         user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
         session["shopping_cart"] = user.shopping_cart
 
+    new_products = Product.objects().order_by('-date_created')[:8]
+
     return render_template("home.html",
                             featured_products=[1,2,3,4,5],
-                            new_products=[1,2,3,4,5], 
+                            new_products=new_products, 
                             best_selling_products=[1,2,3,4,5], 
                             all_products=Product.objects())
 

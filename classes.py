@@ -10,9 +10,10 @@ class Product(db.Document):
     title = db.StringField(required=True, max_length=200)
     price = db.FloatField(required=True)
     quantity = db.IntField(required=True)
-    description = db.StringField(required=True, max_length=1000)
+    description = db.StringField(required=True, max_length=2000)
     image_url = db.StringField(max_length=1000)
     category = db.ReferenceField(Category)
+    date_created = db.DateTimeField(default=datetime.now())
 
 class CartProduct(db.EmbeddedDocument):
     product = db.ReferenceField(Product)
