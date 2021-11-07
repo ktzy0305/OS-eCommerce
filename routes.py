@@ -19,9 +19,9 @@ def index():
     new_products = Product.objects().order_by('-date_created')[:8]
 
     return render_template("home.html",
-                            featured_products=[1,2,3,4,5],
+                            featured_products=[1,2,3,4,5,6,7,8,9,10],
                             new_products=new_products, 
-                            best_selling_products=[1,2,3,4,5], 
+                            best_selling_products=[1,2,3,4,5,6,7,8,9,10], 
                             all_products=Product.objects())
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -558,6 +558,14 @@ def user_orders():
 def reset_password():
     return render_template("reset_password.html")
 
+@app.route('/privacy')
+def privacy_policy():
+    return render_template("policies/privacy_policy.html")
+
+@app.route('/terms')
+def terms_of_service():
+    return render_template("policies/terms_of_service.html")
+
 """
 > REST API Routes
 Contains the endpoints for mobile applications to perform user functionality
@@ -616,6 +624,20 @@ def api_get_shopping_cart(user_id):
     data = request.get_json()
     user = User.objects.get(id=user_id)
     return jsonify(user.shopping_cart)
+
+"""
+Error Handling
+"""
+
+# Error 404 - Page Not Found
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template(
+        "errors/page_not_found.html", 
+        message="The page you're trying to find does not exist.", 
+        page_url=url_for("index"), 
+        page_name="Home"
+    ), 404
 
 if __name__ == "__main__":
     app.run()

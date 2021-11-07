@@ -1,0 +1,4 @@
+body > div > div.row.mt-3.align-items-stretch > div{
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}

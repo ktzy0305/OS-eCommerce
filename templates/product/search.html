@@ -9,6 +9,7 @@ Search Category | '{{ category.name }}'
 {% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_search.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_display.css') }}">
 {% endblock %}
 
@@ -24,7 +25,7 @@ Search Category | '{{ category.name }}'
             {% endif %}
         </div>
     </div>
-    <div class="row mt-3">
+    <div class="row mt-3 align-items-stretch">
         {% if products|length == 0 %}
         <div class="col-12">
             <div class="text-danger">
@@ -33,7 +34,7 @@ Search Category | '{{ category.name }}'
         </div>
         {% else %}
         {% for product in products %}
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6 mb-4">
+        <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 mb-4">
             <a class="product-link" href="{{ url_for('product_info', product_id=product.id) }}">
                 <div class="card product-item h-100">
                     <div class="image-container">
