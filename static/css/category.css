@@ -9,6 +9,7 @@
 }
 
 .category-item{
+    flex: 1;
     border: 1px solid #e0e0e0;
     padding: 20px;
 }
@@ -37,4 +38,8 @@
 
 .category-name{
     padding-top: 10px;
+}
+
+.swiper-slide{
+    height: auto;
 }

@@ -17,7 +17,7 @@
                 {% if (loop.index % 2) == 1 %}
                 <div class="swiper-slide">
                     <a class="category-link" href="{{ url_for('product_search', category_name=category.name) }}">
-                        <div class="category-item">
+                        <div class="category-item h-50">
                             <div class="category-image-holder d-block mx-auto">
                                 <img class="category-image img-fluid" src="{{ category.image_url }}">
                             </div>
@@ -27,7 +27,7 @@
                 {% endif %}
                 {% if (loop.index % 2) == 0 %}
                     <a class="category-link" href="{{ url_for('product_search', category_name=category.name) }}">
-                        <div class="category-item">
+                        <div class="category-item h-50">
                             <div class="category-image-holder d-block mx-auto">
                                 <img class="category-image img-fluid" src="{{ category.image_url }}">
                             </div>

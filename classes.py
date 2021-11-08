@@ -14,6 +14,7 @@ class Product(db.Document):
     image_url = db.StringField(max_length=1000)
     category = db.ReferenceField(Category)
     date_created = db.DateTimeField(default=datetime.now())
+    featured_on_homepage = db.BooleanField(default=False)
 
 class CartProduct(db.EmbeddedDocument):
     product = db.ReferenceField(Product)

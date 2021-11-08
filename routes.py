@@ -16,12 +16,44 @@ def index():
         user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
         session["shopping_cart"] = user.shopping_cart
 
+    # Get all featured products from the database by date
+    featured_products = Product.objects(featured_on_homepage=True).order_by('-created_at')
+
+    # Get 8 most recent products from the database by date
     new_products = Product.objects().order_by('-date_created')[:8]
 
+    # Get 8 best selling products from the database based on the number of times they have been sold in past orders
+    def get_best_selling_products():
+        # Get all orders from the database
+        orders = Order.objects()
+
+        # Create a dictionary of products and the number of times they have been sold
+        product_dict = {}
+        for order in orders:
+            for cart_product in order.ordered_products:
+                if cart_product.product.id in product_dict:
+                    product_dict[cart_product.product.id] += 1
+                else:
+                    product_dict[cart_product.product.id] = 1
+
+        # Sort the dictionary by the number of times the product has been sold
+        product_dict = sorted(product_dict.items(), key=lambda x: x[1], reverse=True)
+
+        # Get the top 8 products from the dictionary
+        limit = 8 if len(product_dict) >= 8 else len(product_dict)
+
+        top_products = []
+        
+        for i in range(limit):
+            top_products.append(Product.objects(id=product_dict[i][0]).first())
+
+        return top_products
+
+
     return render_template("home.html",
-                            featured_products=[1,2,3,4,5,6,7,8,9,10],
+                            featured_products=featured_products,
                             new_products=new_products, 
-                            best_selling_products=[1,2,3,4,5,6,7,8,9,10], 
+                            best_selling_products=get_best_selling_products(), 
                             all_products=Product.objects())
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -7,7 +7,9 @@ body > div.container > div > div > div:nth-child(4) > div > div{
     padding-right: 5px !important;
 }
 
-.owl-carousel .owl-stage{display: flex;}
+.owl-carousel .owl-stage{
+    display: flex;
+}
 
 .owl-product-item{
     display: flex;
@@ -17,11 +19,6 @@ body > div.container > div > div > div:nth-child(4) > div > div{
 
 .card-body{
     padding: 0.8rem;
-}
-
-/* To be removed */
-.heighted-item{
-    height: 240px;
 }
 
 .product-item{
