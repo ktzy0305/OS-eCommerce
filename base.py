@@ -3,6 +3,7 @@ from bson.json_util import dumps, loads
 from datetime import datetime, timedelta
 from encoder import JSONEncoder
 from flask import Flask, jsonify, render_template, redirect, request, Response, session, url_for
+from flask_mail import Mail, Message
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -39,3 +40,19 @@ else:
 
 app.config['MONGODB_HOST'] = DB_URI
 db = MongoEngine(app)
+
+# Flask-mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+
+if ('MAIL_USERNAME' and 'MAIL_PASSWORD') in os.environ:
+    app.config['MAIL_USERNAME'] = os.environ["MAIL_USERNAME"]
+    app.config['MAIL_PASSWORD'] = os.environ["MAIL_PASSWORD"]
+else:
+    MailCredentialsFile = open(os.path.join(BASE_DIR, "credentials", "MailCredentials.json"))
+    MailCredentials = json.load(MailCredentialsFile)
+    app.config['MAIL_USERNAME'] = MailCredentials["username"]
+    app.config['MAIL_PASSWORD'] = MailCredentials["password"]
+
+mail = Mail(app)

@@ -63,6 +63,74 @@ function UpdateProfileFormValidity(){
     return CheckProfileName() && CheckDateOfBirth();
 }
 
+// Change Email Form Checks
+function CheckCurrentEmail(){
+    let current_email = document.getElementById("current_email");
+    let current_email_error = document.getElementById("current_email_error");
+    if (current_email.value === ""){
+        current_email.classList.add("is-invalid");
+        current_email_error.innerHTML = "Current email cannot be empty!";
+        return false;
+    }
+    else{
+        if(CheckIfValidEmail(current_email.value)){
+            current_email.classList.remove("is-invalid");
+            current_email_error.innerHTML = "";
+            return true;
+        }
+        else{
+            current_email.classList.add("is-invalid");
+            current_email_error.innerHTML = "Current email is not valid!";
+            return false;
+        }
+    }
+}
+
+function CheckNewEmail(){
+    let new_email = document.getElementById("new_email");
+    let new_email_error = document.getElementById('new_email_error');
+    if (new_email.value === ""){
+        new_email.classList.add("is-invalid");
+        new_email_error.innerHTML = "New email cannot be empty!";
+        return false;
+    }
+    else{
+        if(CheckIfValidEmail(new_email.value)){
+            if (CheckNewEmailSimilar()){
+                new_email.classList.add("is-invalid");
+                new_email_error.innerHTML = "New email must be different from current email!";
+                return false;
+            }
+            else{
+                new_email.classList.remove("is-invalid");
+                new_email_error.innerHTML = "";
+                return true;
+            }
+        }
+        else{
+            new_email.classList.add("is-invalid");
+            new_email_error.innerHTML = "Please enter a valid email!";
+            return false;
+        }
+    }
+}
+
+function CheckIfValidEmail(data){
+    return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data))
+}
+
+function CheckNewEmailSimilar(){
+    let new_email = document.getElementById("new_email");
+    let current_email = document.getElementById("current_email");
+    return new_email.value === current_email.value;
+}
+
+
+function ChangeEmailFormValidity(){
+    return CheckCurrentEmail() && CheckNewEmail();
+}
+
+// Change Password Form Checks
 function CheckCurrentPassword(){
     let current_password = document.getElementById("current_password");
     let current_password_error = document.getElementById("current_password_error");

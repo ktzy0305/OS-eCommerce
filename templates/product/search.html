@@ -19,6 +19,8 @@ Search Category | '{{ category.name }}'
         <div class="col-12">
             {% if query %}
             <h4>Products related to "{{ query }}"</h4>
+            {% else %}
+            <h4>Displaying all products</h4>
             {% endif %}
             {% if category %}
             <h4>Products related to "{{ category.name }}"</h4>
