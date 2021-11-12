@@ -1,9 +1,11 @@
+from datetime import time
 from logging import error
 from os import name
 
 from mongoengine import errors
 from base import *
 from classes import *
+from emailhelper import send_password_reset_email
 import re
 
 """
@@ -144,14 +146,20 @@ def category():
 @app.route('/products/search')
 def product_search():
     query = request.args.get('query')
-    category_name = request.args.get('category_name') 
+    category_name = request.args.get('category_name')
     if query:
         products = Product.objects.filter(title__icontains=query)
+        if category_name:
+            category = Category.objects(name=category_name).first()
+            products = products.filter(category=category)
         return render_template('product/search.html', products=products, query=query)
     else:
-        category = Category.objects(name=category_name).first()
-        products = Product.objects(category=category)
-        return render_template('product/search.html', products=products, category=category)
+        if category_name:
+            category = Category.objects(name=category_name).first()
+            products = Product.objects(category=category)
+            return render_template('product/search.html', products=products, category=category)
+        else:
+            return render_template('product/search.html', products=Product.objects(), query=query)
 
 @app.route('/products/<string:product_id>')
 def product_info(product_id):
@@ -405,7 +413,13 @@ def user_profile():
     # User
     user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
 
-    if "pw_change_msg" in request.args:
+    if "email_change_msg" in request.args:
+        email_change_msg = request.args["email_change_msg"]
+        return render_template('profile.html', user=user, email_change_msg=email_change_msg)
+    elif "email_change_errors" in request.args:
+        email_change_errors = request.args["email_change_errors"]
+        return render_template('profile.html', user=user, email_change_errors=email_change_errors)
+    elif "pw_change_msg" in request.args:
         pw_change_msg = request.args["pw_change_msg"]
         return render_template("profile.html", user=user, pw_change_msg=pw_change_msg)
     elif "pw_change_errors" in request.args:
@@ -446,6 +460,46 @@ def update_user_profile():
         user.save()
 
     return redirect(url_for('user_profile'))
+
+@app.route('/user/profile/email/update', methods=["POST"])
+def change_email():
+    # Check if user is logged in
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+    # User
+    user = User.objects(id=session.get("user")["_id"]["$oid"]).first()
+
+    # Form Data
+    current_email = request.form.get("current_email")
+    new_email = request.form.get("new_email")
+
+    # Errors
+    errors = {}
+
+    # Checks
+    check_empty = lambda data: data == ""
+    check_email = lambda data: re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", data) is not None
+    
+    if check_empty(current_email):
+        errors["current_email_error"] = "Current email cannot be empty!"
+    if check_empty(new_email):
+        errors["new_email_error"] = "New email cannot be empty!"
+    if check_email(current_email) is False:
+        errors["current_email_error"] = "Current email is invalid!"
+    if current_email != user.email:
+        errors["current_email_error"] = "Current email is incorrect!"
+    if check_email(new_email) is False:
+        errors["new_email_error"] = "New email is not valid!"
+    if new_email == current_email:
+        errors["new_email_error"] = "New email cannot be the same as current email!"
+
+    if len(errors) == 0:
+        user.email = new_email
+        user.save()
+        return redirect(url_for('user_profile', email_change_msg="Email successfully changed!"))
+    else:
+        return redirect(url_for('user_profile', email_change_errors=errors))
+
 
 @app.route('/user/address/add', methods=["POST"])
 def add_address():
@@ -545,6 +599,9 @@ def change_password():
     # Check password type same
     check_same = (new_password == new_password_2)
 
+    # Check new password strength
+    check_strength = re.search('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[A-z0-9?!@#$%^&*()]{8,}$', new_password)
+
     # Errors
     errors = {}
 
@@ -552,11 +609,13 @@ def change_password():
         errors["current_password_error"] = "Password cannot be empty!"
     if check_empty(new_password):
         errors["new_password_error"] = "New password cannot be empty!"
-    if check_empty(new_password):
+    if check_empty(new_password_2):
         errors["new_password_2_error"] = "Field cannot be empty!"
 
     if not bcrypt.checkpw(current_password.encode('utf-8'), user.password.encode('utf-8')):
         errors["current_password_error"] = "Incorrect Password!"
+    if not check_strength:
+        errors["new_password_error"] = "New password must be at least 8 characters long and contain at least one uppercase letter, lowercase letter, and number! These are the allowable symbols: ?!@#$%^&*()"
     if not check_same:
         errors["new_password_2_error"] = "Passwords are not the same."
 
@@ -586,9 +645,58 @@ def user_orders():
     return render_template("orders.html", orders = user_orders)
 
 
-@app.route('/resetpassword')
+@app.route('/resetpassword', methods=["GET", "POST"])
 def reset_password():
-    return render_template("reset_password.html")
+    if request.method == "GET":
+        return render_template("reset_password.html")
+    if request.method == "POST":
+        email = request.form.get("email")
+        if email is None:
+            return render_template("reset_password.html", error="Email cannot be empty!")
+        else:
+            user = User.objects(email=email).first()
+            if user:
+                token = get_reset_token(user.email)
+                send_password_reset_email(user, token)
+            
+            return render_template("reset_password.html", sent=True, email=email)
+
+@app.route('/resetpassword/<token>', methods=["GET", "POST"])
+def reset_password_token(token):
+    if request.method == "GET":
+        return render_template("reset_password_token.html", token=token)
+    if request.method == "POST":
+        print(f'token: {token}')
+        user = check_reset_token(token)
+        print(user)
+        password = request.form.get("password")
+        password_2 = request.form.get("password_2")
+
+        check_strength = re.search('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[A-z0-9?!@#$%^&*()]{8,}$', password)
+
+        if password is None:
+            return render_template("reset_password_token.html", error="Password cannot be empty!")
+        if password_2 is None:
+            return render_template("reset_password_token.html", error="Password cannot be empty!")
+        if password != password_2:
+            return render_template("reset_password_token.html", error="Passwords are not the same!")
+        if not check_strength:
+            return render_template("reset_password_token.html", error="New password must be at least 8 characters long and contain at least one uppercase letter, lowercase letter, and number! These are the allowable symbols: ?!@#$%^&*()")
+
+        if user:
+            if check_reset_token(token) == "Signature has expired":
+                return render_template("reset_password_token.html", error="Token has expired!")
+            else:
+                if password == password_2:
+                    new_password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                    user.password = new_password_hash.decode("utf-8") 
+                    user.save()
+                    return render_template("reset_password_token.html", success=True)
+                else:
+                    return render_template("reset_password_token.html", error="Passwords are not the same!")
+
+        else:
+            return render_template("reset_password_token.html", error="User does not exist!")
 
 @app.route('/privacy')
 def privacy_policy():
@@ -612,7 +720,9 @@ def api_login():
         return jsonify("User with email {} does not exist.".format(email)), 200
     else:
         if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            token = jwt.encode({'user' : user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, app.config["SECRET_KEY"])
+            token = jwt.encode({'user' : user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, 
+                                key=app.config["SECRET_KEY"],
+                                algorithm="HS256")
             return jsonify({'token' : token.decode('UTF-8')}), 200
         else:
             return jsonify("The entered password was invalid.".format(email)), 200
@@ -628,7 +738,9 @@ def api_register():
             password_hash = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
             new_user = User(email=data["email"], password=password_hash, name=data["name"])
             new_user.save()
-            token = jwt.encode({'user' : new_user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, app.config["SECRET_KEY"])
+            token = jwt.encode({'user' : new_user.email, 'exp': datetime.utcnow() + timedelta(minutes=60)}, 
+                                key=app.config["SECRET_KEY"],
+                                alogrithm='HS256')
             return jsonify({'token' : token.decode('UTF-8')}), 201
         else:
             return jsonify("A user with the email {0} already exists.".format(data["email"])), 200
@@ -670,6 +782,35 @@ def page_not_found(e):
         page_url=url_for("index"), 
         page_name="Home"
     ), 404
+
+
+"""
+Reset Token
+"""
+def get_reset_token(email, expires=timedelta(minutes=10)):
+    token = jwt.encode({'reset_password': email, 'exp': datetime.utcnow() + expires}, 
+                        key=app.config["SECRET_KEY"],
+                        algorithm="HS256")
+    return token
+
+def check_reset_token(token):
+    try:
+        data = jwt.decode(token, 
+                          key=app.config["SECRET_KEY"], 
+                          algorithms=["HS256"],
+                          leeway=timedelta(seconds=10))
+        email = data['reset_password']
+        user = User.objects(email=email).first()
+        if user:
+            return user
+        else:
+            return False
+    except jwt.ExpiredSignatureError:
+        return "Signature has expired"
+    except jwt.InvalidTokenError:
+        return False
+    except Exception as e:
+        return False 
 
 if __name__ == "__main__":
     app.run()
