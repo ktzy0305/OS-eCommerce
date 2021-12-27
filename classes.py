@@ -1,10 +1,13 @@
-from bson.json_util import default
 from base import db
 from datetime import datetime
 
 class Category(db.Document):
     name = db.StringField(required=True, max_length=200)
     image_url = db.StringField(max_length=1000)
+
+class Specification(db.EmbeddedDocument):
+    name = db.StringField(required=True, max_length=200)
+    value = db.StringField(required=True, max_length=200)
 
 class Product(db.Document):
     title = db.StringField(required=True, max_length=200)
@@ -15,6 +18,20 @@ class Product(db.Document):
     category = db.ReferenceField(Category)
     date_created = db.DateTimeField(default=datetime.now())
     featured_on_homepage = db.BooleanField(default=False)
+    specifications = db.ListField(db.EmbeddedDocumentField(Specification))
+    on_discount = db.BooleanField(default=False)
+    discount_percentage = db.IntField(default=0)
+    discounted_price = db.FloatField(default=0)
+
+class SKUAttribute(db.EmbeddedDocument):
+    name = db.StringField(required=True, max_length=200)
+    value = db.StringField(required=True, max_length=200)
+    
+class SKU(db.Document):
+    product = db.ReferenceField(Product)
+    quantity = db.IntField(required=True, default=0)
+    price = db.FloatField(required=True, default=0)
+    attributes = db.ListField(db.EmbeddedDocumentField(SKUAttribute))
 
 class CartProduct(db.EmbeddedDocument):
     product = db.ReferenceField(Product)
