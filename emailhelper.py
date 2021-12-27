@@ -3,7 +3,7 @@ from threading import Thread
 
 def send_password_reset_email(user, token):
     msg = Message()
-    msg.subject = "Flask App Password Reset"
+    msg.subject = "KT-Home Password Reset"
     msg.sender = app.config['MAIL_USERNAME']
     msg.recipients = [user.email]
     msg.html = render_template('email/reset_password_email.html',

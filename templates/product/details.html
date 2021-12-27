@@ -43,7 +43,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Specification</td>
+                                    <td>Variation</td>
                                     <td colspan="2">
                                         <button class="product-variation">XS</button>
                                         <button class="product-variation">S</button>
@@ -78,14 +78,12 @@
                             <td>Category: </td>
                             <td>{{ product.category.name }}</td>
                         </tr>
+                        {% for specification in product.specifications %}
                         <tr>
-                            <td>Brand: </td>
-                            <td>No Brand</td>
+                            <td>{{ specification.name }}: </td>
+                            <td>{{ specification.value }}</td>
                         </tr>
-                        <tr>
-                            <td>Warranty: </td>
-                            <td>No Warranty</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
                 <div class="info-card-section-title">
