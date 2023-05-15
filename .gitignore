@@ -4,3 +4,4 @@ __pycache__/*
 seed_db.py
 AppCredentials.json
 MongoDBCredentials.json
+MailCredentials.json
